@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '@/store'
+import Cookies from 'js-cookie'
 
 Vue.use(VueRouter)
 
@@ -15,7 +17,8 @@ const router = new VueRouter({
       name: 'home',
       component: () => import('@/views/Home.vue'),
       meta: {
-        pageTitle: 'Home',
+        isRedirectIfLoggedIn: true,
+        pageTitle: 'home',
         breadcrumb: [
           {
             text: 'Home',
@@ -29,6 +32,7 @@ const router = new VueRouter({
       name: 'second-page',
       component: () => import('@/views/SecondPage.vue'),
       meta: {
+        isRedirectIfLoggedIn: true,
         pageTitle: 'Second Page',
         breadcrumb: [
           {
@@ -43,6 +47,7 @@ const router = new VueRouter({
       name: 'login',
       component: () => import('@/views/auth/Login.vue'),
       meta: {
+        isRedirectIfLoggedIn: false,
         layout: 'full',
       },
     },
@@ -69,6 +74,23 @@ router.afterEach(() => {
   if (appLoading) {
     appLoading.style.display = 'none'
   }
+})
+
+// Check token khi chuyển route
+router.beforeEach((to, _, next) => {
+  const token = Cookies.get('token')
+  if (to.meta.isRedirectIfLoggedIn) {
+    if (!token) {
+      store.commit('removeAuthentication')
+      return next({ name: 'login' })
+    }
+  }
+  if (to.meta.isRedirectIfLoggedIn === false) {
+    if (token) {
+      return next({ name: 'home' })
+    }
+  }
+  return next()
 })
 
 export default router

@@ -1,49 +1,42 @@
 import axios from '@/libs/axios'
+import Cookies from 'js-cookie'
 
 export default {
   state: {
-    isAuthenticated: !!localStorage.getItem('isAuthenticated'),
-    token: localStorage.getItem('token') ? localStorage.getItem('token') : null,
-    userData: localStorage.getItem('userData')
-      ? JSON.parse(localStorage.getItem('userData'))
-      : null,
+    isAuthenticated: !!Cookies.get('isAuthenticated'),
+    token: Cookies.get('token') ? Cookies.get('token') : null,
   },
   getters: {
-    token: state => state.token,
-    isAuthenticated: state => state.isAuthenticated,
-    userData: state => state.userData,
+    token: (state) => state.token,
+    isAuthenticated: (state) => state.isAuthenticated,
   },
   mutations: {
     setAuthenticated(state, payload) {
-      localStorage.setItem('isAuthenticated', payload.isAuthenticated)
+      Cookies.set('isAuthenticated', payload.isAuthenticated)
       state.isAuthenticated = payload.isAuthenticated
-      localStorage.setItem('token', payload.userData.token)
-      state.token = payload.userData.token
-      localStorage.setItem('userData', JSON.stringify(payload.userData))
-      state.userData = payload.userData
+      Cookies.set('token', payload.token)
+      state.token = payload.token
     },
     removeAuthentication(state) {
-      localStorage.removeItem('isAuthenticated')
-      localStorage.removeItem('token')
-      localStorage.removeItem('userData')
+      Cookies.remove('isAuthenticated')
+      Cookies.remove('token')
       state.isAuthenticated = false
       state.token = null
-      state.userData = null
     },
   },
   actions: {
     onLogin(context, payload) {
       return new Promise((resolve, reject) => {
         axios
-          .post('/users/login', payload)
-          .then(res => {
+          .post('/auth/login', payload)
+          .then((res) => {
             context.commit('setAuthenticated', {
               isAuthenticated: true,
-              userData: res.data,
+              token: res.data,
             })
             resolve({ success: true, data: res.data })
           })
-          .catch(error => reject(error.message))
+          .catch((error) => reject(error.message))
       })
     },
   },
