@@ -3,33 +3,61 @@
     <b-row class="auth-inner m-0">
       <!-- Brand logo-->
       <b-link class="brand-logo">
-        <h2 class="brand-text text-primary ml-1">Mission Timer</h2>
+        <h2 class="brand-text text-primary ml-1">
+          Mission Timer
+        </h2>
       </b-link>
       <!-- /Brand logo-->
 
       <!-- Left Text-->
-      <b-col lg="8" class="d-none d-lg-flex align-items-center p-5">
+      <b-col
+        lg="8"
+        class="d-none d-lg-flex align-items-center p-5"
+      >
         <div
           class="w-100 d-lg-flex align-items-center justify-content-center px-5"
         >
-          <b-img fluid :src="imgUrl" alt="Login V2" />
+          <b-img
+            fluid
+            :src="imgUrl"
+            alt="Login V2"
+          />
         </div>
       </b-col>
       <!-- /Left Text-->
 
       <!-- Login-->
-      <b-col lg="4" class="d-flex align-items-center auth-bg px-2 p-lg-5">
-        <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
-          <b-card-title title-tag="h2" class="font-weight-bold mb-1">
+      <b-col
+        lg="4"
+        class="d-flex align-items-center auth-bg px-2 p-lg-5"
+      >
+        <b-col
+          sm="8"
+          md="6"
+          lg="12"
+          class="px-xl-2 mx-auto"
+        >
+          <b-card-title
+            title-tag="h2"
+            class="font-weight-bold mb-1"
+          >
             Hệ thống quản lý công tác khác
           </b-card-title>
-          <b-card-text class="mb-2"> Vui lòng đăng nhập </b-card-text>
+          <b-card-text class="mb-2">
+            Vui lòng đăng nhập
+          </b-card-text>
 
           <!-- form -->
           <validation-observer ref="loginValidation">
-            <b-form class="auth-login-form mt-2" @submit.prevent>
+            <b-form
+              class="auth-login-form mt-2"
+              @submit.prevent
+            >
               <!-- email -->
-              <b-form-group label="Mã đăng nhập" label-for="login-email">
+              <b-form-group
+                label="Mã đăng nhập"
+                label-for="login-email"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="Mã đăng nhập"
@@ -114,8 +142,7 @@
                 >
                   Đăng nhập
                 </b-button>
-              </b-overlay></b-form
-            >
+              </b-overlay></b-form>
           </validation-observer>
 
           <!-- <b-card-text class="text-center mt-2">
@@ -234,7 +261,7 @@ export default {
   },
   methods: {
     validationForm() {
-      this.$refs.loginValidation.validate().then((success) => {
+      this.$refs.loginValidation.validate().then(success => {
         if (success) {
           this.busy = true
           this.$store
@@ -242,7 +269,7 @@ export default {
               userId: this.userEmail,
               password: this.password,
             })
-            .then((res) => {
+            .then(res => {
               this.$router.push('/')
               this.$toast({
                 component: ToastificationContent,

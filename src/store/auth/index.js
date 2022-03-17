@@ -7,8 +7,8 @@ export default {
     token: Cookies.get('token') ? Cookies.get('token') : null,
   },
   getters: {
-    token: (state) => state.token,
-    isAuthenticated: (state) => state.isAuthenticated,
+    token: state => state.token,
+    isAuthenticated: state => state.isAuthenticated,
   },
   mutations: {
     setAuthenticated(state, payload) {
@@ -29,14 +29,14 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post('/auth/login', payload)
-          .then((res) => {
+          .then(res => {
             context.commit('setAuthenticated', {
               isAuthenticated: true,
               token: res.data,
             })
             resolve({ success: true, data: res.data })
           })
-          .catch((error) => reject(error.message))
+          .catch(error => reject(error.message))
       })
     },
   },

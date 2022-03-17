@@ -18,28 +18,14 @@ const router = new VueRouter({
       component: () => import('@/views/Home.vue'),
       meta: {
         isRedirectIfLoggedIn: true,
-        pageTitle: 'home',
-        breadcrumb: [
-          {
-            text: 'Home',
-            active: true,
-          },
-        ],
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/users',
+      name: 'users-page',
+      component: () => import('@/views/users/User.vue'),
       meta: {
         isRedirectIfLoggedIn: true,
-        pageTitle: 'Second Page',
-        breadcrumb: [
-          {
-            text: 'Second Page',
-            active: true,
-          },
-        ],
       },
     },
     {

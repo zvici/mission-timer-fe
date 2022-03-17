@@ -3,8 +3,14 @@
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
-        <b-link class="nav-link" @click="toggleVerticalMenuActive">
-          <feather-icon icon="MenuIcon" size="21" />
+        <b-link
+          class="nav-link"
+          @click="toggleVerticalMenuActive"
+        >
+          <feather-icon
+            icon="MenuIcon"
+            size="21"
+          />
         </b-link>
       </li>
     </ul>
@@ -24,7 +30,9 @@
       >
         <template #button-content>
           <div class="d-sm-flex d-none user-nav">
-            <p class="user-name font-weight-bolder mb-0">John Doe</p>
+            <p class="user-name font-weight-bolder mb-0">
+              Thanh Nhã
+            </p>
             <span class="user-status">Admin</span>
           </div>
           <b-avatar
@@ -38,11 +46,15 @@
         </template>
 
         <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon size="16" icon="UserIcon" class="mr-50" />
-          <span>Profile</span>
+          <feather-icon
+            size="16"
+            icon="UserIcon"
+            class="mr-50"
+          />
+          <span>Hồ sơ</span>
         </b-dropdown-item>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <!-- <b-dropdown-item link-class="d-flex align-items-center">
           <feather-icon size="16" icon="MailIcon" class="mr-50" />
           <span>Inbox</span>
         </b-dropdown-item>
@@ -55,7 +67,7 @@
         <b-dropdown-item link-class="d-flex align-items-center">
           <feather-icon size="16" icon="MessageSquareIcon" class="mr-50" />
           <span>Chat</span>
-        </b-dropdown-item>
+        </b-dropdown-item> -->
 
         <b-dropdown-divider />
 
@@ -63,8 +75,12 @@
           link-class="d-flex align-items-center"
           @click="onLogout"
         >
-          <feather-icon size="16" icon="LogOutIcon" class="mr-50" />
-          <span>Logout</span>
+          <feather-icon
+            size="16"
+            icon="LogOutIcon"
+            class="mr-50"
+          />
+          <span>Đăng xuất</span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
