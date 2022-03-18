@@ -47,35 +47,49 @@
         <label>Quyền:</label>
         <b-form-select
           v-model="form.role"
-          :options="options"
+          :options="optionsRole"
         />
       </b-form-group>
       <b-form-group>
         <label>Khoa:</label>
         <b-form-select
           v-model="form.department"
-          :options="options"
+          :options="optionsDepartment"
+          value-field="_id"
+          text-field="name"
         />
       </b-form-group>
-      <b-form-group>
+      <!-- <b-form-group>
         <label>Bộ môn:</label>
         <b-form-select
           v-model="form.subject"
           :options="options"
         />
-      </b-form-group>
-      <b-button
-        variant="outline-primary"
-        @click="onClose()"
-      >
-        Đóng
-      </b-button>
-      <b-button
-        variant="success"
-        type="submit"
-      >
-        Thêm
-      </b-button>
+      </b-form-group> -->
+      <div class="d-flex justify-content-end">
+        <b-button
+          variant="outline-primary"
+          @click="onClose()"
+        >
+          Đóng
+        </b-button>
+        <b-overlay
+          :show="isBusy"
+          rounded
+          opacity="0.6"
+          spinner-small
+          spinner-variant="primary"
+          class="d-inline-block"
+        >
+          <b-button
+            class="ml-1"
+            variant="success"
+            type="submit"
+          >
+            Thêm
+          </b-button>
+        </b-overlay>
+      </div>
     </b-form>
   </b-modal>
 </template>
@@ -88,9 +102,12 @@ import {
   VBTooltip,
   BFormSelect,
   BButton,
+  BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import departmentService from '@/services/department'
+import userServices from '@/services/user'
 
 export default {
   components: {
@@ -100,6 +117,7 @@ export default {
     BFormInput,
     BFormSelect,
     BButton,
+    BOverlay,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -119,22 +137,35 @@ export default {
         email: '',
         phone: '',
         department: '',
-        subject: '',
+        // subject: '',
         role: '',
         address: '',
       },
+      isBusy: false,
       selected: null,
-      options: [
+      optionsDepartment: [],
+      optionsRole: [
         {
-          value: 'cntt',
-          text: 'Công nghệ thông tin',
+          value: 'ADMIN',
+          text: 'Admin',
         },
         {
-          value: 'cntp',
-          text: 'Công nghệ thực phẩm',
+          value: 'ACADEMIC_STAFF',
+          text: 'Giáo vụ',
+        },
+        {
+          value: 'STAFF',
+          text: 'Giảng viên',
         },
       ],
     }
+  },
+  watch: {
+    isVisible() {
+      if (this.isVisible) {
+        this.getDepartments()
+      }
+    },
   },
   destroyed() {
     this.selected = null
@@ -146,13 +177,54 @@ export default {
     async getDepartments() {
       try {
         const res = await departmentService.getDepartments()
-        console.log(res)
+        this.optionsDepartment = res.data.data
       } catch {
         console.log('lỗi rồi nè')
       }
     },
     onSubmit() {
-      console.log(this.form)
+      this.onAddUser()
+    },
+    onClear() {
+      this.form = {
+        name: '',
+        userId: '',
+        email: '',
+        phone: '',
+        department: '',
+        // subject: '',
+        role: '',
+        address: '',
+      }
+    },
+    async onAddUser() {
+      this.isBusy = true
+      try {
+        const res = await userServices.addUser(this.form)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: res.data.message,
+            variant: 'success',
+          },
+        })
+        this.$emit('reload-data')
+        this.onClear()
+      } catch (e) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: e,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
     },
   },
 }
