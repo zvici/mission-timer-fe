@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import axios from '@/libs/axios'
 import Cookies from 'js-cookie'
 
@@ -32,11 +33,13 @@ export default {
           .then(res => {
             context.commit('setAuthenticated', {
               isAuthenticated: true,
-              token: res.data,
+              token: res.data.token,
             })
-            resolve({ success: true, data: res.data })
+            resolve({ success: true, data: res.data.token })
           })
-          .catch(error => reject(error.message))
+          .catch(error => {
+            reject(error.response)
+          })
       })
     },
   },

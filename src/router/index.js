@@ -29,6 +29,14 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/years',
+      name: 'years-page',
+      component: () => import('@/views/years/Year.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/auth/Login.vue'),

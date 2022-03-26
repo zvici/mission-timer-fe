@@ -280,12 +280,12 @@ export default {
                 },
               })
             })
-            .catch(() => {
+            .catch(error => {
               this.busy = false
               this.$toast({
                 component: ToastificationContent,
                 props: {
-                  title: 'Sai tài khoản hoặc mật khẩu',
+                  title: error.data?.message,
                   icon: 'BellIcon',
                   variant: 'warning',
                 },

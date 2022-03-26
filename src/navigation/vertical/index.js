@@ -9,4 +9,19 @@ export default [
     route: 'users-page',
     icon: 'UserIcon',
   },
+  {
+    title: 'Hoạt động',
+    icon: 'HomeIcon',
+    children: [
+      {
+        title: 'Loại hoạt động',
+        icon: 'UserIcon',
+      },
+    ],
+  },
+  {
+    title: 'Năm học',
+    route: 'years-page',
+    icon: 'HomeIcon',
+  },
 ]
