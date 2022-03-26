@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-cycle
-import axios from '@/libs/axios'
 import Cookies from 'js-cookie'
+// eslint-disable-next-line import/no-cycle
+import axiosIns from '@/libs/axios'
 
 export default {
   state: {
@@ -28,14 +29,15 @@ export default {
   actions: {
     onLogin(context, payload) {
       return new Promise((resolve, reject) => {
-        axios
+        axiosIns
           .post('/auth/login', payload)
           .then(res => {
+            console.log(res)
             context.commit('setAuthenticated', {
               isAuthenticated: true,
-              token: res.data.token,
+              token: res.data.data.token,
             })
-            resolve({ success: true, data: res.data.token })
+            resolve({ success: true, data: res.data.data.token })
           })
           .catch(error => {
             reject(error.response)
