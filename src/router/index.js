@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from '@/store'
 import Cookies from 'js-cookie'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -32,6 +32,14 @@ const router = new VueRouter({
       path: '/years',
       name: 'years-page',
       component: () => import('@/views/years/Year.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/activity',
+      name: 'activity-page',
+      component: () => import('@/views/activity/Calendar.vue'),
       meta: {
         isRedirectIfLoggedIn: true,
       },

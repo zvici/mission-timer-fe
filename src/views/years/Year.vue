@@ -23,6 +23,18 @@
       <template #cell(startDate)="data">
         {{ data.value | formatDate }}
       </template>
+      <template #cell(action)>
+        <div class="text-center">
+          <b-button
+            v-ripple.400="'rgba(40, 199, 111, 0.15)'"
+            v-b-toggle.sidebar-1
+            variant="flat-success"
+            class="btn-icon rounded-circle"
+          >
+            <feather-icon icon="EditIcon" />
+          </b-button>
+        </div>
+      </template>
       <template #empty>
         <p :class="`text-center ${empty.status} m-0 py-3`">
           {{ empty.text }}
@@ -49,6 +61,7 @@ import {
   BSpinner,
   BButton,
   VBTooltip,
+  VBToggle,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import moment from 'moment'
@@ -66,6 +79,7 @@ export default {
   directives: {
     'b-tooltip': VBTooltip,
     Ripple,
+    'b-toggle': VBToggle,
   },
   filters: {
     formatDate(value) {

@@ -31,9 +31,9 @@
         <template #button-content>
           <div class="d-sm-flex d-none user-nav">
             <p class="user-name font-weight-bolder mb-0">
-              Thanh Nhã
+              {{ userData.name }}
             </p>
-            <span class="user-status">Admin</span>
+            <span class="user-status">{{ userData.role }}</span>
           </div>
           <b-avatar
             size="40"
@@ -97,6 +97,7 @@ import {
   BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -115,6 +116,11 @@ export default {
       type: Function,
       default: () => {},
     },
+  },
+  computed: {
+    ...mapGetters({
+      userData: 'userData',
+    }),
   },
   methods: {
     onLogout() {

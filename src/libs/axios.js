@@ -1,11 +1,10 @@
 import Vue from 'vue'
-// eslint-disable-next-line import/no-cycle
-import store from '@/store'
 // axios
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const axiosIns = axios.create({
-  baseURL: 'https://mission-timer-be.herokuapp.com/api',
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
@@ -13,7 +12,7 @@ const axiosIns = axios.create({
 })
 
 axiosIns.interceptors.request.use(config => {
-  const { token } = store.getters
+  const token = Cookies.get('token')
   if (token) {
     // eslint-disable-next-line no-param-reassign
     config.headers.Authorization = `Bearer ${token}`

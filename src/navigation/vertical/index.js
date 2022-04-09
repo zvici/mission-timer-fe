@@ -11,6 +11,11 @@ export default [
   },
   {
     title: 'Hoạt động',
+    route: 'activity-page',
+    icon: 'HomeIcon',
+  },
+  {
+    title: 'Hoạt động',
     icon: 'HomeIcon',
     children: [
       {

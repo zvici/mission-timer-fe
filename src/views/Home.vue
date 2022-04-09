@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-card title="U là trời chưa có gì hết trơn á 🚀">
-      <b-card-text>Đang làm nè</b-card-text>
+    <b-card title="🚀">
+      <b-card-text>🚀</b-card-text>
     </b-card>
   </div>
 </template>
