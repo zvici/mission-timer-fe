@@ -6,7 +6,6 @@ export default function useCalendarEventHandler(props, clearForm, emit) {
   // eventLocal
   // ------------------------------------------------
   const eventLocal = ref(JSON.parse(JSON.stringify(props.event.value)))
-  console.log(eventLocal)
   const resetEventLocal = () => {
     eventLocal.value = JSON.parse(JSON.stringify(props.event.value))
   }

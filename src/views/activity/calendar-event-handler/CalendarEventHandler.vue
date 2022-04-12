@@ -9,20 +9,27 @@
       backdrop
       no-header
       right
-      @change="(val) => $emit('update:is-event-handler-sidebar-active', val)"
+      @change="val => $emit('update:is-event-handler-sidebar-active', val)"
     >
       <template #default="{ hide }">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
+        <div
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+        >
           <h5 class="mb-0">
-            {{ eventLocal.id ? 'Cập nhật': 'Thêm' }} hoạt động
+            {{ eventLocal.id ? 'Cập nhật' : 'Thêm' }} hoạt động
           </h5>
           <div>
             <feather-icon
               v-if="eventLocal.id"
-              icon="TrashIcon"
+              icon="UserPlusIcon"
               class="cursor-pointer"
-              @click="$emit('remove-event'); hide();"
+            />
+            <feather-icon
+              v-if="eventLocal.id"
+              icon="TrashIcon"
+              class="cursor-pointer ml-2"
+              @click="$emit('remove-event').hide()"
             />
             <feather-icon
               class="ml-1 cursor-pointer"
@@ -38,14 +45,12 @@
           #default="{ handleSubmit }"
           ref="refFormObserver"
         >
-
           <!-- Form -->
           <b-form
             class="p-2"
             @submit.prevent="handleSubmit(onSubmit)"
             @reset.prevent="resetForm"
           >
-
             <!-- Title -->
             <validation-provider
               #default="validationContext"
@@ -70,16 +75,14 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-
-            <!-- Calendar -->
+            <!-- Type -->
             <validation-provider
               #default="validationContext"
               name="Calendar"
               rules="required"
             >
-
               <b-form-group
-                label="Calendar"
+                label="Loại lịch"
                 label-for="calendar"
                 :state="getValidationState(validationContext)"
               >
@@ -91,12 +94,11 @@
                   :reduce="calendar => calendar.label"
                   input-id="calendar"
                 >
-
                   <template #option="{ color, label }">
                     <div
                       class="rounded-circle d-inline-block mr-50"
                       :class="`bg-${color}`"
-                      style="height:10px;width:10px"
+                      style="height: 10px; width: 10px"
                     />
                     <span> {{ label }}</span>
                   </template>
@@ -105,13 +107,44 @@
                     <div
                       class="rounded-circle d-inline-block mr-50"
                       :class="`bg-${color}`"
-                      style="height:10px;width:10px"
+                      style="height: 10px; width: 10px"
                     />
                     <span> {{ label }}</span>
                   </template>
                 </v-select>
 
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
+            <!-- Calendar -->
+            <validation-provider
+              #default="validationContext"
+              name="Year"
+              rules="required"
+            >
+              <b-form-group
+                label="Năm học"
+                label-for="Year"
+                :state="getValidationState(validationContext)"
+              >
+                <v-select
+                  v-model="eventLocal.year"
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  :options="yearOptions"
+                  label="name"
+                  :reduce="year => year._id"
+                  input-id="_id"
+                >
+                  <span> {{ name }}</span>
+                </v-select>
+
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
@@ -123,7 +156,6 @@
               name="Start Date"
               rules="required"
             >
-
               <b-form-group
                 label="Start Date"
                 label-for="start-date"
@@ -132,9 +164,11 @@
                 <flat-pickr
                   v-model="eventLocal.start"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
@@ -146,7 +180,6 @@
               name="End Date"
               rules="required"
             >
-
               <b-form-group
                 label="End Date"
                 label-for="end-date"
@@ -155,16 +188,18 @@
                 <flat-pickr
                   v-model="eventLocal.end"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
 
             <!-- All Day -->
-            <b-form-group>
+            <!-- <b-form-group>
               <b-form-checkbox
                 v-model="eventLocal.allDay"
                 name="check-button"
@@ -173,7 +208,7 @@
               >
                 All Day
               </b-form-checkbox>
-            </b-form-group>
+            </b-form-group> -->
 
             <!-- Event URL -->
             <validation-provider
@@ -181,7 +216,6 @@
               name="Event URL"
               rules="url"
             >
-
               <b-form-group
                 label="Event URL"
                 label-for="event-url"
@@ -194,14 +228,16 @@
                   placeholder="htttps://www.google.com"
                   trim
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
 
             <!-- Guests -->
-            <b-form-group
+            <!-- <b-form-group
               label="Add Guests"
               label-for="add-guests"
             >
@@ -232,7 +268,7 @@
                   <span class="ml-50 align-middle"> {{ name }}</span>
                 </template>
               </v-select>
-            </b-form-group>
+            </b-form-group> -->
 
             <!-- Location -->
             <b-form-group
@@ -266,14 +302,14 @@
                 class="mr-2"
                 type="submit"
               >
-                {{ eventLocal.id ? 'Update' : 'Add ' }}
+                {{ eventLocal.id ? 'Lưu' : 'Thêm' }}
               </b-button>
               <b-button
                 v-ripple.400="'rgba(186, 191, 199, 0.15)'"
                 type="reset"
                 variant="outline-secondary"
               >
-                Reset
+                Làm mới
               </b-button>
             </div>
           </b-form>
@@ -285,7 +321,13 @@
 
 <script>
 import {
-  BSidebar, BForm, BFormGroup, BFormInput, BFormCheckbox, BAvatar, BFormTextarea, BButton, BFormInvalidFeedback,
+  BSidebar,
+  BForm,
+  BFormGroup,
+  BFormInput,
+  BFormTextarea,
+  BButton,
+  BFormInvalidFeedback,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
@@ -294,6 +336,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, email, url } from '@validations'
 import formValidation from '@core/comp-functions/forms/form-validation'
 import { ref, toRefs } from '@vue/composition-api'
+import yearServices from '@/services/year'
 import useCalendarEventHandler from './useCalendarEventHandler'
 
 export default {
@@ -303,9 +346,7 @@ export default {
     BForm,
     BFormGroup,
     BFormInput,
-    BFormCheckbox,
     BFormTextarea,
-    BAvatar,
     vSelect,
     flatPickr,
     ValidationProvider,
@@ -338,6 +379,15 @@ export default {
       required,
       email,
       url,
+      yearOptions: [],
+    }
+  },
+  async created() {
+    try {
+      const res = await yearServices.getYears()
+      this.yearOptions = res.data.data.years
+    } catch (err) {
+      console.log(err.response)
     }
   },
   setup(props, { emit }) {
@@ -367,10 +417,7 @@ export default {
     } = useCalendarEventHandler(toRefs(props), clearFormData, emit)
 
     const {
-      refFormObserver,
-      getValidationState,
-      resetForm,
-      clearForm,
+      refFormObserver, getValidationState, resetForm, clearForm,
     } = formValidation(resetEventLocal, props.clearEventData)
 
     clearFormData.value = clearForm

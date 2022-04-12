@@ -35,11 +35,9 @@ export default function userCalendar() {
   // calendars
   // ------------------------------------------------
   const calendarsColor = {
-    Business: 'primary',
-    Holiday: 'success',
-    Personal: 'danger',
-    Family: 'warning',
-    ETC: 'info',
+    STAFF: 'primary',
+    ACADEMIC_STAFF: 'success',
+    MONITOR_EXAM: 'danger',
   }
 
   // ------------------------------------------------
@@ -159,7 +157,7 @@ export default function userCalendar() {
       start,
       end,
       // eslint-disable-next-line object-curly-newline
-      extendedProps: { calendar, guests, location, description },
+      extendedProps: { calendar, description },
       allDay,
     } = eventApi
 
@@ -170,8 +168,6 @@ export default function userCalendar() {
       end,
       extendedProps: {
         calendar,
-        guests,
-        location,
         description,
       },
       allDay,
@@ -197,7 +193,7 @@ export default function userCalendar() {
       .then(response => {
         const updatedEvent = response.data.event
 
-        const propsToUpdate = ['id', 'title', 'url']
+        const propsToUpdate = ['id', 'title']
         const extendedPropsToUpdate = [
           'calendar',
           'guests',
@@ -263,7 +259,7 @@ export default function userCalendar() {
             end: item.endDate,
             title: item.content,
             extendedProps: {
-              calendar: 'Personal',
+              calendar: item.rollUpType,
             },
             // eslint-disable-next-line no-underscore-dangle
             id: item._id,
@@ -329,14 +325,14 @@ export default function userCalendar() {
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
       const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
-
+      // eslint-disable-next-line no-underscore-dangle
+      console.log('color', calendarEvent._def.extendedProps)
       return [
         // Background Color
         `bg-light-${colorName}`,
       ]
     },
     eventClick({ event: clickedEvent }) {
-      console.log(clickedEvent)
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
       event.value = grabEventDataFromEventApi(clickedEvent)

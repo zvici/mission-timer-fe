@@ -13,13 +13,13 @@
       </b-button>
       <div class="mt-3">
         <h5 class="app-label section-label mb-1">
-          <span class="align-middle">Calendars</span>
+          <span class="align-middle">Xem theo</span>
         </h5>
         <b-form-checkbox
           v-model="checkAll"
           class="mb-1"
         >
-          Xem tất cả
+          Tất cả
         </b-form-checkbox>
         <b-form-group>
           <b-form-checkbox-group

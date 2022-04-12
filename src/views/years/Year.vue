@@ -117,7 +117,7 @@ export default {
       this.isBusy = true
       try {
         const res = await yearServices.getYears()
-        this.items = res.data.data
+        this.items = res.data.data.years
       } catch {
         console.log('looix roi')
       } finally {

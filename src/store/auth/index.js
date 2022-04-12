@@ -5,7 +5,7 @@ export default {
   state: {
     isAuthenticated: !!Cookies.get('isAuthenticated'),
     token: Cookies.get('token') ? Cookies.get('token') : null,
-    userData: Cookies.get('userData') ? Cookies.get('userData') : null,
+    userData: Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null,
   },
   getters: {
     token: state => state.token,
@@ -18,7 +18,7 @@ export default {
       state.isAuthenticated = payload.isAuthenticated
       Cookies.set('token', payload.token)
       state.token = payload.token
-      Cookies.set('userData', payload.userData)
+      Cookies.set('userData', JSON.stringify(payload.userData))
       state.userData = payload.userData
     },
     removeAuthentication(state) {

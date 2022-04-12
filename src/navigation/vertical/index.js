@@ -5,23 +5,18 @@ export default [
     icon: 'HomeIcon',
   },
   {
-    title: 'Người dùng',
-    route: 'users-page',
-    icon: 'UserIcon',
-  },
-  {
     title: 'Hoạt động',
     route: 'activity-page',
-    icon: 'HomeIcon',
+    icon: 'CalendarIcon',
   },
   {
     title: 'Năm học',
     route: 'years-page',
-    icon: 'HomeIcon',
+    icon: 'SunIcon',
   },
   {
-    title: 'Test',
-    route: 'test-page',
-    icon: 'HomeIcon',
+    title: 'Người dùng',
+    route: 'users-page',
+    icon: 'UsersIcon',
   },
 ]

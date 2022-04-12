@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from '@axios'
 
 export default {
@@ -5,27 +6,19 @@ export default {
   state: {
     calendarOptions: [
       {
-        color: 'danger',
-        label: 'Personal',
-      },
-      {
         color: 'primary',
-        label: 'Business',
-      },
-      {
-        color: 'warning',
-        label: 'Family',
+        label: 'Tự điểm danh',
       },
       {
         color: 'success',
-        label: 'Holiday',
+        label: 'Giáo vụ điểm danh',
       },
       {
-        color: 'info',
-        label: 'ETC',
+        color: 'danger',
+        label: 'Canh thi',
       },
     ],
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC'],
+    selectedCalendars: ['STAFF', 'ACADEMIC_STAFF', 'MONITOR_EXAM'],
   },
   getters: {},
   mutations: {
@@ -45,7 +38,7 @@ export default {
     addEvent(ctx, { event }) {
       return new Promise((resolve, reject) => {
         axios
-          .post('/apps/calendar/events', { event })
+          .post('/activity', { event })
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
@@ -53,7 +46,7 @@ export default {
     updateEvent(ctx, { event }) {
       return new Promise((resolve, reject) => {
         axios
-          .post(`/apps/calendar/events/${event.id}`, { event })
+          .put(`/activity/${event.id}`, { event })
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
@@ -61,7 +54,7 @@ export default {
     removeEvent(ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
-          .delete(`/apps/calendar/events/${id}`)
+          .delete(`/activity/${id}`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
