@@ -255,7 +255,20 @@ export default function userCalendar() {
         calendars: selectedCalendars.value,
       })
       .then(response => {
-        successCallback(response.data)
+        const { activities } = response.data.data
+        successCallback(
+          activities.map(item => ({
+            ...item,
+            start: item.startDate,
+            end: item.endDate,
+            title: item.content,
+            extendedProps: {
+              calendar: 'Personal',
+            },
+            // eslint-disable-next-line no-underscore-dangle
+            id: item._id,
+          })),
+        )
       })
       .catch(() => {
         toast({
@@ -323,6 +336,7 @@ export default function userCalendar() {
       ]
     },
     eventClick({ event: clickedEvent }) {
+      console.log(clickedEvent)
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
       event.value = grabEventDataFromEventApi(clickedEvent)

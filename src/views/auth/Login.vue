@@ -5,18 +5,16 @@
       <b-card class="mb-0">
         <b-link class="brand-logo">
           <!-- <vuexy-logo /> -->
-
           <h2 class="brand-text text-primary ml-1">
-            <img src="../../assets/images/logo/logo_hufi.png">
+            <img src="../../assets/images/logo/logo-hufi-new-v6.png">
           </h2>
         </b-link>
-
-        <b-card-title class="mb-1">
+        <!-- <b-card-title class="mb-1">
           Chào mừng bạn 👋
         </b-card-title>
         <b-card-text class="mb-2">
           Vui lòng đăng nhập
-        </b-card-text>
+        </b-card-text> -->
 
         <!-- form -->
         <validation-observer ref="loginValidation">
@@ -41,7 +39,7 @@
                   name="login-email"
                   autofocus
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-danger">Vui lòng nhập mã đăng nhập</small>
               </validation-provider>
             </b-form-group>
 
@@ -80,7 +78,7 @@
                     />
                   </b-input-group-append>
                 </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-danger">Vui lòng nhập mật khẩu</small>
               </validation-provider>
             </b-form-group>
 
@@ -170,11 +168,10 @@ import {
   BFormInput,
   BInputGroupAppend,
   BInputGroup,
-  BCardText,
-  BCardTitle,
   BForm,
   BButton,
   BOverlay,
+  BCard,
 } from 'bootstrap-vue'
 import { required } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
@@ -188,9 +185,8 @@ export default {
     BFormInput,
     BInputGroupAppend,
     BInputGroup,
-    BCardText,
-    BCardTitle,
     BForm,
+    BCard,
     BButton,
     ValidationProvider,
     ValidationObserver,

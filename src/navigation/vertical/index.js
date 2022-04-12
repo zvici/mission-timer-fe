@@ -15,18 +15,13 @@ export default [
     icon: 'HomeIcon',
   },
   {
-    title: 'Hoạt động',
-    icon: 'HomeIcon',
-    children: [
-      {
-        title: 'Loại hoạt động',
-        icon: 'UserIcon',
-      },
-    ],
-  },
-  {
     title: 'Năm học',
     route: 'years-page',
+    icon: 'HomeIcon',
+  },
+  {
+    title: 'Test',
+    route: 'test-page',
     icon: 'HomeIcon',
   },
 ]

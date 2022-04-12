@@ -15,7 +15,7 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            {{ eventLocal.id ? 'Update': 'Add' }} Event
+            {{ eventLocal.id ? 'Cập nhật': 'Thêm' }} hoạt động
           </h5>
           <div>
             <feather-icon

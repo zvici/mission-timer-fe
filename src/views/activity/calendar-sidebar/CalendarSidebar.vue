@@ -9,7 +9,7 @@
         block
         @click="$emit('update:isEventHandlerSidebarActive', true)"
       >
-        Add Event
+        Thêm lịch
       </b-button>
       <div class="mt-3">
         <h5 class="app-label section-label mb-1">
@@ -19,7 +19,7 @@
           v-model="checkAll"
           class="mb-1"
         >
-          View All
+          Xem tất cả
         </b-form-checkbox>
         <b-form-group>
           <b-form-checkbox-group

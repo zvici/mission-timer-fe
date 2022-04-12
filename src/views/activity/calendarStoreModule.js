@@ -37,11 +37,7 @@ export default {
     fetchEvents(ctx, { calendars }) {
       return new Promise((resolve, reject) => {
         axios
-          .get('/apps/calendar/events', {
-            params: {
-              calendars: calendars.join(','),
-            },
-          })
+          .get('/activity')
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
