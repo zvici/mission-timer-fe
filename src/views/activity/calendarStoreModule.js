@@ -6,14 +6,17 @@ export default {
   state: {
     calendarOptions: [
       {
+        id: 'STAFF',
         color: 'primary',
         label: 'Tự điểm danh',
       },
       {
+        id: 'ACADEMIC_STAFF',
         color: 'success',
         label: 'Giáo vụ điểm danh',
       },
       {
+        id: 'MONITOR_EXAM',
         color: 'danger',
         label: 'Canh thi',
       },
@@ -29,8 +32,9 @@ export default {
   actions: {
     fetchEvents(ctx, { calendars }) {
       return new Promise((resolve, reject) => {
+        console.log(calendars)
         axios
-          .get('/activity')
+          .get(`/activity/${calendars || '[]'}`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
@@ -38,7 +42,7 @@ export default {
     addEvent(ctx, { event }) {
       return new Promise((resolve, reject) => {
         axios
-          .post('/activity', { event })
+          .post('/activity')
           .then(response => resolve(response))
           .catch(error => reject(error))
       })

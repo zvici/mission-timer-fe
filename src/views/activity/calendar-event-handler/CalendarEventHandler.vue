@@ -138,9 +138,7 @@
                   label="name"
                   :reduce="year => year._id"
                   input-id="_id"
-                >
-                  <span> {{ name }}</span>
-                </v-select>
+                />
 
                 <b-form-invalid-feedback
                   :state="getValidationState(validationContext)"

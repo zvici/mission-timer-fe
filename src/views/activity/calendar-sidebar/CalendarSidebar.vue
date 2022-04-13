@@ -29,9 +29,9 @@
           >
             <b-form-checkbox
               v-for="item in calendarOptions"
-              :key="item.label"
+              :key="item.id"
               name="event-filter"
-              :value="item.label"
+              :value="item.id"
               class="mb-1"
               :class="`custom-control-${item.color}`"
             >

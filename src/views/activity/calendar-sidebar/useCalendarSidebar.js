@@ -30,7 +30,7 @@ export default function useCalendarSidebar() {
     get: () => selectedCalendars.value.length === calendarOptions.value.length,
     set: val => {
       if (val) {
-        selectedCalendars.value = calendarOptions.value.map(i => i.label)
+        selectedCalendars.value = calendarOptions.value.map(i => i.id)
       } else if (selectedCalendars.value.length === calendarOptions.value.length) {
         selectedCalendars.value = []
       }

@@ -23,6 +23,8 @@ export default function userCalendar() {
   // ------------------------------------------------
   const refCalendar = ref(null)
 
+  const isLoading = ref(false)
+
   // ------------------------------------------------
   // calendarApi
   // ------------------------------------------------
@@ -90,7 +92,7 @@ export default function userCalendar() {
   const updateEventInCalendar = (
     updatedEventData,
     propsToUpdate,
-    extendedPropsToUpdate,
+    extendedPropsToUpdate
   ) => {
     toast({
       component: ToastificationContent,
@@ -125,7 +127,7 @@ export default function userCalendar() {
       const propName = extendedPropsToUpdate[index]
       existingEvent.setExtendedProp(
         propName,
-        updatedEventData.extendedProps[propName],
+        updatedEventData.extendedProps[propName]
       )
     }
   }
@@ -133,7 +135,7 @@ export default function userCalendar() {
   // ------------------------------------------------
   // (UI) removeEventInCalendar
   // ------------------------------------------------
-  const removeEventInCalendar = eventId => {
+  const removeEventInCalendar = (eventId) => {
     toast({
       component: ToastificationContent,
       props: {
@@ -150,7 +152,7 @@ export default function userCalendar() {
   // ? It will return just event data from fullCalendar's EventApi which is not required for event mutations and other tasks
   // ! You need to update below function as per your extendedProps
   // ------------------------------------------------
-  const grabEventDataFromEventApi = eventApi => {
+  const grabEventDataFromEventApi = (eventApi) => {
     const {
       id,
       title,
@@ -177,7 +179,7 @@ export default function userCalendar() {
   // ------------------------------------------------
   // addEvent
   // ------------------------------------------------
-  const addEvent = eventData => {
+  const addEvent = (eventData) => {
     store.dispatch('calendar/addEvent', { event: eventData }).then(() => {
       // eslint-disable-next-line no-use-before-define
       refetchEvents()
@@ -187,10 +189,10 @@ export default function userCalendar() {
   // ------------------------------------------------
   // updateEvent
   // ------------------------------------------------
-  const updateEvent = eventData => {
+  const updateEvent = (eventData) => {
     store
       .dispatch('calendar/updateEvent', { event: eventData })
-      .then(response => {
+      .then((response) => {
         const updatedEvent = response.data.event
 
         const propsToUpdate = ['id', 'title']
@@ -204,7 +206,7 @@ export default function userCalendar() {
         updateEventInCalendar(
           updatedEvent,
           propsToUpdate,
-          extendedPropsToUpdate,
+          extendedPropsToUpdate
         )
       })
   }
@@ -230,7 +232,7 @@ export default function userCalendar() {
   // selectedCalendars
   // ------------------------------------------------
   const selectedCalendars = computed(
-    () => store.state.calendar.selectedCalendars,
+    () => store.state.calendar.selectedCalendars
   )
 
   watch(selectedCalendars, () => {
@@ -242,6 +244,7 @@ export default function userCalendar() {
   // * This will be called by fullCalendar to fetch events. Also this can be used to refetch events.
   // --------------------------------------------------------------------------------------------------
   const fetchEvents = (info, successCallback) => {
+    isLoading.value = true
     // If there's no info => Don't make useless API call
     if (!info) return
 
@@ -250,10 +253,10 @@ export default function userCalendar() {
       .dispatch('calendar/fetchEvents', {
         calendars: selectedCalendars.value,
       })
-      .then(response => {
+      .then((response) => {
         const { activities } = response.data.data
         successCallback(
-          activities.map(item => ({
+          activities.map((item) => ({
             ...item,
             start: item.startDate,
             end: item.endDate,
@@ -263,7 +266,7 @@ export default function userCalendar() {
             },
             // eslint-disable-next-line no-underscore-dangle
             id: item._id,
-          })),
+          }))
         )
       })
       .catch(() => {
@@ -275,6 +278,9 @@ export default function userCalendar() {
             variant: 'danger',
           },
         })
+      })
+      .finally(() => {
+        isLoading.value = false
       })
   }
 
@@ -324,9 +330,8 @@ export default function userCalendar() {
 
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
-      // eslint-disable-next-line no-underscore-dangle
-      console.log('color', calendarEvent._def.extendedProps)
+      const colorName =
+        calendarsColor[calendarEvent._def.extendedProps.calendar]
       return [
         // Background Color
         `bg-light-${colorName}`,
@@ -347,7 +352,8 @@ export default function userCalendar() {
         text: 'sidebar',
         click() {
           // eslint-disable-next-line no-use-before-define
-          isCalendarOverlaySidebarActive.value = !isCalendarOverlaySidebarActive.value
+          isCalendarOverlaySidebarActive.value =
+            !isCalendarOverlaySidebarActive.value
         },
       },
     },
@@ -361,7 +367,7 @@ export default function userCalendar() {
         ```
       */
       event.value = JSON.parse(
-        JSON.stringify(Object.assign(event.value, { start: info.date })),
+        JSON.stringify(Object.assign(event.value, { start: info.date }))
       )
       // eslint-disable-next-line no-use-before-define
       isEventHandlerSidebarActive.value = true
@@ -410,7 +416,7 @@ export default function userCalendar() {
     removeEvent,
     refetchEvents,
     fetchEvents,
-
+    isLoading,
     // ----- UI ----- //
     isEventHandlerSidebarActive,
   }
