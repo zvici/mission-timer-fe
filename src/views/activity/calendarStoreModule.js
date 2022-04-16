@@ -30,24 +30,32 @@ export default {
     },
   },
   actions: {
-    fetchEvents(ctx, { calendars }) {
+    fetchEvents(_ctx, { calendars }) {
       return new Promise((resolve, reject) => {
-        console.log(calendars)
         axios
           .get(`/activity/${calendars || '[]'}`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-    addEvent(ctx, { event }) {
+    addEvent(_ctx, { event }) {
+      const body = {
+        year: event.year,
+        content: event.title,
+        description: event.extendedProps.description,
+        startDate: event.start,
+        endDate: event.end,
+        rollUpType: event.extendedProps.calendar,
+      }
       return new Promise((resolve, reject) => {
         axios
-          .post('/activity')
+          .post('/activity', body)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-    updateEvent(ctx, { event }) {
+    updateEvent(_ctx, { event }) {
+      console.log(event)
       return new Promise((resolve, reject) => {
         axios
           .put(`/activity/${event.id}`, { event })
@@ -55,7 +63,7 @@ export default {
           .catch(error => reject(error))
       })
     },
-    removeEvent(ctx, { id }) {
+    removeEvent(_ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
           .delete(`/activity/${id}`)

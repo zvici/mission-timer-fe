@@ -57,6 +57,7 @@ export default function userCalendar() {
       location: '',
       description: '',
     },
+    year: '',
   }
   const event = ref(JSON.parse(JSON.stringify(blankEvent)))
   const clearEventData = () => {
@@ -159,9 +160,11 @@ export default function userCalendar() {
       start,
       end,
       // eslint-disable-next-line object-curly-newline
-      extendedProps: { calendar, description },
+      extendedProps: { calendar, description, year },
       allDay,
     } = eventApi
+
+    console.log(eventApi)
 
     return {
       id,
@@ -171,6 +174,7 @@ export default function userCalendar() {
       extendedProps: {
         calendar,
         description,
+        year,
       },
       allDay,
     }
@@ -353,6 +357,7 @@ export default function userCalendar() {
         click() {
           // eslint-disable-next-line no-use-before-define
           isCalendarOverlaySidebarActive.value =
+            // eslint-disable-next-line no-use-before-define
             !isCalendarOverlaySidebarActive.value
         },
       },

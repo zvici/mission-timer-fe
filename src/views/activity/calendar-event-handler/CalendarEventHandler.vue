@@ -58,7 +58,7 @@
               rules="required"
             >
               <b-form-group
-                label="Title"
+                label="Nội dung"
                 label-for="event-title"
               >
                 <b-form-input
@@ -91,8 +91,8 @@
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="calendarOptions"
                   label="label"
-                  :reduce="calendar => calendar.label"
-                  input-id="calendar"
+                  :reduce="calendar => calendar.id"
+                  input-id="id"
                 >
                   <template #option="{ color, label }">
                     <div
@@ -132,7 +132,7 @@
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-                  v-model="eventLocal.year"
+                  v-model="eventLocal.extendedProps.year"
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="yearOptions"
                   label="name"
@@ -147,7 +147,6 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-
             <!-- Start Date -->
             <validation-provider
               #default="validationContext"
@@ -155,7 +154,7 @@
               rules="required"
             >
               <b-form-group
-                label="Start Date"
+                label="Ngày bắt đầu"
                 label-for="start-date"
                 :state="getValidationState(validationContext)"
               >
@@ -176,10 +175,9 @@
             <validation-provider
               #default="validationContext"
               name="End Date"
-              rules="required"
             >
               <b-form-group
-                label="End Date"
+                label="Ngày kết thúc"
                 label-for="end-date"
                 :state="getValidationState(validationContext)"
               >
@@ -209,7 +207,7 @@
             </b-form-group> -->
 
             <!-- Event URL -->
-            <validation-provider
+            <!-- <validation-provider
               #default="validationContext"
               name="Event URL"
               rules="url"
@@ -232,7 +230,7 @@
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider>
+            </validation-provider> -->
 
             <!-- Guests -->
             <!-- <b-form-group
@@ -267,9 +265,7 @@
                 </template>
               </v-select>
             </b-form-group> -->
-
-            <!-- Location -->
-            <b-form-group
+            <!-- <b-form-group
               label="Location"
               label-for="event-location"
             >
@@ -279,11 +275,11 @@
                 trim
                 placeholder="Event Location"
               />
-            </b-form-group>
+            </b-form-group> -->
 
             <!-- Textarea -->
             <b-form-group
-              label="Description"
+              label="Mô tả"
               label-for="event-description"
             >
               <b-form-textarea
@@ -300,7 +296,7 @@
                 class="mr-2"
                 type="submit"
               >
-                {{ eventLocal.id ? 'Lưu' : 'Thêm' }}
+                {{ eventLocal.id ? 'Lưu' : 'Thêm' }} hoạt động
               </b-button>
               <b-button
                 v-ripple.400="'rgba(186, 191, 199, 0.15)'"
