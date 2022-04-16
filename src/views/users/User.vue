@@ -49,7 +49,7 @@
         <div class="d-flex align-items-center">
           <b-avatar
             size="lg"
-            :src="require('@/assets/images/portrait/small/avatar-s-20.jpg')"
+            :src="data.item.avatar"
           />
           <div class="pl-2 d-flex flex-column">
             <span class="">

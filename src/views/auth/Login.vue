@@ -39,7 +39,9 @@
                   name="login-email"
                   autofocus
                 />
-                <small class="text-danger">Vui lòng nhập mã đăng nhập</small>
+                <small class="text-danger">{{
+                  errors[0] && 'Vui lòng nhập mã đăng nhập'
+                }}</small>
               </validation-provider>
             </b-form-group>
 
@@ -78,7 +80,9 @@
                     />
                   </b-input-group-append>
                 </b-input-group>
-                <small class="text-danger">Vui lòng nhập mật khẩu</small>
+                <small class="text-danger">{{
+                  errors[0] && 'Vui lòng nhập mật khẩu'
+                }}</small>
               </validation-provider>
             </b-form-group>
 
