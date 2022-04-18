@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import VueSweetalert2 from 'vue-sweetalert2'
 
 import router from './router'
 import store from './store'
@@ -13,9 +14,14 @@ import './global-components'
 import '@/libs/portal-vue'
 import '@/libs/toastification'
 
+// filter global
+import '@/libs/filter'
+
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+
+Vue.use(VueSweetalert2)
 
 // Composition API
 Vue.use(VueCompositionAPI)

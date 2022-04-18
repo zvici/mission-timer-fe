@@ -22,6 +22,14 @@ const router = new VueRouter({
     },
     {
       path: '/users',
+      name: 'content-page',
+      component: () => import('@/views/content/Content.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/users',
       name: 'users-page',
       component: () => import('@/views/users/User.vue'),
       meta: {

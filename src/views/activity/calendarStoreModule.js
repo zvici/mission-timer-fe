@@ -40,7 +40,7 @@ export default {
     },
     addEvent(_ctx, { event }) {
       const body = {
-        year: event.year,
+        year: event.extendedProps.year,
         content: event.title,
         description: event.extendedProps.description,
         startDate: event.start,
@@ -55,10 +55,17 @@ export default {
       })
     },
     updateEvent(_ctx, { event }) {
-      console.log(event)
+      const body = {
+        year: event.extendedProps.year,
+        content: event.title,
+        description: event.extendedProps.description,
+        startDate: event.start,
+        endDate: event.end,
+        rollUpType: event.extendedProps.calendar,
+      }
       return new Promise((resolve, reject) => {
         axios
-          .put(`/activity/${event.id}`, { event })
+          .put(`/activity/${event.id}`, body)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })

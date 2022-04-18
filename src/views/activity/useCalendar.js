@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Full Calendar Plugins
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -91,9 +92,9 @@ export default function userCalendar() {
   // (UI) updateEventInCalendar
   // ------------------------------------------------
   const updateEventInCalendar = (
-    updatedEventData,
-    propsToUpdate,
-    extendedPropsToUpdate
+    _updatedEventData,
+    _propsToUpdate,
+    _extendedPropsToUpdate,
   ) => {
     toast({
       component: ToastificationContent,
@@ -103,40 +104,40 @@ export default function userCalendar() {
         variant: 'success',
       },
     })
+    // console.log(updatedEventData.extendedProps)
+    // const existingEvent = calendarApi.getEventById(updatedEventData.extendedProps.id)
 
-    const existingEvent = calendarApi.getEventById(updatedEventData.id)
+    // // --- Set event properties except date related ----- //
+    // // ? Docs: https://fullcalendar.io/docs/Event-setProp
+    // // dateRelatedProps => ['start', 'end', 'allDay']
+    // // eslint-disable-next-line no-plusplus
+    // for (let index = 0; index < propsToUpdate.length; index++) {
+    //   const propName = propsToUpdate[index]
+    //   existingEvent.setProp(propName, updatedEventData[propName])
+    // }
 
-    // --- Set event properties except date related ----- //
-    // ? Docs: https://fullcalendar.io/docs/Event-setProp
-    // dateRelatedProps => ['start', 'end', 'allDay']
-    // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < propsToUpdate.length; index++) {
-      const propName = propsToUpdate[index]
-      existingEvent.setProp(propName, updatedEventData[propName])
-    }
+    // // --- Set date related props ----- //
+    // // ? Docs: https://fullcalendar.io/docs/Event-setDates
+    // existingEvent.setDates(updatedEventData.start, updatedEventData.end, {
+    //   allDay: updatedEventData.allDay,
+    // })
 
-    // --- Set date related props ----- //
-    // ? Docs: https://fullcalendar.io/docs/Event-setDates
-    existingEvent.setDates(updatedEventData.start, updatedEventData.end, {
-      allDay: updatedEventData.allDay,
-    })
-
-    // --- Set event's extendedProps ----- //
-    // ? Docs: https://fullcalendar.io/docs/Event-setExtendedProp
-    // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < extendedPropsToUpdate.length; index++) {
-      const propName = extendedPropsToUpdate[index]
-      existingEvent.setExtendedProp(
-        propName,
-        updatedEventData.extendedProps[propName]
-      )
-    }
+    // // --- Set event's extendedProps ----- //
+    // // ? Docs: https://fullcalendar.io/docs/Event-setExtendedProp
+    // // eslint-disable-next-line no-plusplus
+    // for (let index = 0; index < extendedPropsToUpdate.length; index++) {
+    //   const propName = extendedPropsToUpdate[index]
+    //   existingEvent.setExtendedProp(
+    //     propName,
+    //     updatedEventData.extendedProps[propName]
+    //   )
+    // }
   }
 
   // ------------------------------------------------
   // (UI) removeEventInCalendar
   // ------------------------------------------------
-  const removeEventInCalendar = (eventId) => {
+  const removeEventInCalendar = eventId => {
     toast({
       component: ToastificationContent,
       props: {
@@ -153,7 +154,7 @@ export default function userCalendar() {
   // ? It will return just event data from fullCalendar's EventApi which is not required for event mutations and other tasks
   // ! You need to update below function as per your extendedProps
   // ------------------------------------------------
-  const grabEventDataFromEventApi = (eventApi) => {
+  const grabEventDataFromEventApi = eventApi => {
     const {
       id,
       title,
@@ -163,9 +164,6 @@ export default function userCalendar() {
       extendedProps: { calendar, description, year },
       allDay,
     } = eventApi
-
-    console.log(eventApi)
-
     return {
       id,
       title,
@@ -183,7 +181,7 @@ export default function userCalendar() {
   // ------------------------------------------------
   // addEvent
   // ------------------------------------------------
-  const addEvent = (eventData) => {
+  const addEvent = eventData => {
     store.dispatch('calendar/addEvent', { event: eventData }).then(() => {
       // eslint-disable-next-line no-use-before-define
       refetchEvents()
@@ -193,25 +191,35 @@ export default function userCalendar() {
   // ------------------------------------------------
   // updateEvent
   // ------------------------------------------------
-  const updateEvent = (eventData) => {
+  const updateEvent = eventData => {
     store
       .dispatch('calendar/updateEvent', { event: eventData })
-      .then((response) => {
-        const updatedEvent = response.data.event
+      .then(response => {
+        toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Đã cập nhật hoạt động!',
+            icon: 'CheckIcon',
+            variant: 'success',
+          },
+        })
+        // eslint-disable-next-line no-use-before-define
+        refetchEvents()
+        // const updatedEvent = response.data.event
 
-        const propsToUpdate = ['id', 'title']
-        const extendedPropsToUpdate = [
-          'calendar',
-          'guests',
-          'location',
-          'description',
-        ]
+        // const propsToUpdate = ['id', 'title']
+        // const extendedPropsToUpdate = [
+        //   'calendar',
+        //   'guests',
+        //   'location',
+        //   'description',
+        // ]
 
-        updateEventInCalendar(
-          updatedEvent,
-          propsToUpdate,
-          extendedPropsToUpdate
-        )
+        // updateEventInCalendar(
+        //   updatedEvent,
+        //   propsToUpdate,
+        //   extendedPropsToUpdate,
+        // )
       })
   }
 
@@ -236,7 +244,7 @@ export default function userCalendar() {
   // selectedCalendars
   // ------------------------------------------------
   const selectedCalendars = computed(
-    () => store.state.calendar.selectedCalendars
+    () => store.state.calendar.selectedCalendars,
   )
 
   watch(selectedCalendars, () => {
@@ -257,10 +265,10 @@ export default function userCalendar() {
       .dispatch('calendar/fetchEvents', {
         calendars: selectedCalendars.value,
       })
-      .then((response) => {
+      .then(response => {
         const { activities } = response.data.data
         successCallback(
-          activities.map((item) => ({
+          activities.map(item => ({
             ...item,
             start: item.startDate,
             end: item.endDate,
@@ -270,7 +278,7 @@ export default function userCalendar() {
             },
             // eslint-disable-next-line no-underscore-dangle
             id: item._id,
-          }))
+          })),
         )
       })
       .catch(() => {
@@ -334,8 +342,7 @@ export default function userCalendar() {
 
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
-      const colorName =
-        calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
       return [
         // Background Color
         `bg-light-${colorName}`,
@@ -372,7 +379,7 @@ export default function userCalendar() {
         ```
       */
       event.value = JSON.parse(
-        JSON.stringify(Object.assign(event.value, { start: info.date }))
+        JSON.stringify(Object.assign(event.value, { start: info.date })),
       )
       // eslint-disable-next-line no-use-before-define
       isEventHandlerSidebarActive.value = true

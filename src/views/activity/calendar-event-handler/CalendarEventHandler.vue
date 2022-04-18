@@ -22,8 +22,9 @@
           <div>
             <feather-icon
               v-if="eventLocal.id"
-              icon="UserPlusIcon"
+              icon="EyeIcon"
               class="cursor-pointer"
+              @click="openModalAdd()"
             />
             <feather-icon
               v-if="eventLocal.id"
@@ -310,6 +311,12 @@
         </validation-observer>
       </template>
     </b-sidebar>
+    <detail-modal
+      v-if="eventLocal.id"
+      :is-visible="isVisibleModalAdd"
+      :id-event="eventLocal.id"
+      @close-modal-add="closeModalAdd"
+    />
   </div>
 </template>
 
@@ -332,6 +339,7 @@ import formValidation from '@core/comp-functions/forms/form-validation'
 import { ref, toRefs } from '@vue/composition-api'
 import yearServices from '@/services/year'
 import useCalendarEventHandler from './useCalendarEventHandler'
+import DetailModal from '../detail-modal/DetailModal.vue'
 
 export default {
   components: {
@@ -346,6 +354,7 @@ export default {
     ValidationProvider,
     BFormInvalidFeedback,
     ValidationObserver,
+    DetailModal,
   },
   directives: {
     Ripple,
@@ -374,6 +383,7 @@ export default {
       email,
       url,
       yearOptions: [],
+      isVisibleModalAdd: false,
     }
   },
   async created() {
@@ -383,6 +393,14 @@ export default {
     } catch (err) {
       console.log(err.response)
     }
+  },
+  methods: {
+    openModalAdd() {
+      this.isVisibleModalAdd = true
+    },
+    closeModalAdd() {
+      this.isVisibleModalAdd = false
+    },
   },
   setup(props, { emit }) {
     /*

@@ -6,8 +6,14 @@ export default [
   },
   {
     title: 'Hoạt động',
-    route: 'activity-page',
     icon: 'CalendarIcon',
+    children: [
+      {
+        title: 'Nội dung',
+        route: 'content-page',
+        icon: 'SunIcon',
+      },
+    ],
   },
   {
     title: 'Năm học',
