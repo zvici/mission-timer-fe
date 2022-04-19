@@ -21,7 +21,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/users',
+      path: '/content',
       name: 'content-page',
       component: () => import('@/views/content/Content.vue'),
       meta: {
