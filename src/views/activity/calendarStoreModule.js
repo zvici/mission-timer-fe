@@ -7,18 +7,18 @@ export default {
     calendarOptions: [
       {
         id: 'STAFF',
-        color: 'primary',
-        label: 'Tự điểm danh',
+        color: 'success',
+        label: 'Chấp nhận',
       },
       {
         id: 'ACADEMIC_STAFF',
-        color: 'success',
-        label: 'Giáo vụ điểm danh',
+        color: 'danger',
+        label: 'Từ chối',
       },
       {
         id: 'MONITOR_EXAM',
-        color: 'danger',
-        label: 'Canh thi',
+        color: 'info',
+        label: 'Đã tham gia',
       },
     ],
     selectedCalendars: ['STAFF', 'ACADEMIC_STAFF', 'MONITOR_EXAM'],

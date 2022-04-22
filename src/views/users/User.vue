@@ -79,6 +79,24 @@
           Nhân viên
         </b-badge>
       </template>
+      <template #cell(action)="data">
+        <b-button
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          variant="gradient-info"
+          class="btn-icon rounded-circle"
+          @click="openModalAdd"
+        >
+          <feather-icon icon="EditIcon" />
+        </b-button>
+        <b-button
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          variant="gradient-danger"
+          class="btn-icon rounded-circle ml-1"
+          @click="deleteContent(data.item._id)"
+        >
+          <feather-icon icon="Trash2Icon" />
+        </b-button>
+      </template>
       <template #empty>
         <p :class="`text-center ${empty.status} m-0 py-3`">
           {{ empty.text }}
@@ -145,6 +163,7 @@ export default {
         { key: 'department', label: 'Khoa' },
         { key: 'address', label: 'Địa chỉ' },
         { key: 'role', label: 'Quyền' },
+        { key: 'action', label: 'Hành động' },
       ],
       items: [],
       isBusy: true,

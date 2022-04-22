@@ -9,7 +9,10 @@
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
-          <b-form-input placeholder="Tìm kiếm nội dung công tác" />
+          <b-form-input
+            v-model="searchQuery"
+            placeholder="Tìm kiếm nội dung công tác"
+          />
         </b-input-group>
       </b-col>
       <b-col
@@ -27,7 +30,7 @@
     </b-row>
     <b-table
       :fields="fields"
-      :items="items"
+      :items="resultQuery"
       responsive="sm"
       bordered
       show-empty
@@ -52,8 +55,16 @@
       <template #cell(action)="data">
         <b-button
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="gradient-danger"
+          variant="gradient-info"
           class="btn-icon rounded-circle"
+          @click="openModalAdd"
+        >
+          <feather-icon icon="EditIcon" />
+        </b-button>
+        <b-button
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          variant="gradient-danger"
+          class="btn-icon rounded-circle ml-1"
           @click="deleteContent(data.item._id)"
         >
           <feather-icon icon="Trash2Icon" />
@@ -132,7 +143,19 @@ export default {
         status: 'text-primary',
       },
       isVisibleModalAdd: false,
+      searchQuery: '',
     }
+  },
+  computed: {
+    resultQuery() {
+      if (this.searchQuery) {
+        return this.items.filter(item => this.searchQuery
+          .toLowerCase()
+          .split(' ')
+          .every(v => item.title.toLowerCase().includes(v)))
+      }
+      return this.items
+    },
   },
   created() {
     this.getContents()
@@ -166,34 +189,37 @@ export default {
         confirmButtonText: 'Vâng, tôi sẽ xoá nó!',
         cancelButtonText: 'Đóng!',
         customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
+          confirmButton: 'btn btn-outline-danger',
+          cancelButton: 'btn btn-primary ml-1',
         },
         buttonsStyling: false,
       }).then(result => {
         if (result.value) {
-          contentServices.deleteContent(id).then(res => {
-            console.log(res)
-            this.$swal({
-              icon: 'success',
-              title: 'Đã xoá!',
-              text: res.data.message,
-              customClass: {
-                confirmButton: 'btn btn-success',
-              },
+          contentServices
+            .deleteContent(id)
+            .then(res => {
+              this.$swal({
+                icon: 'success',
+                title: 'Đã xoá!',
+                text: res.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
             })
-          }).catch(err => {
-            this.$swal({
-              icon: 'error',
-              title: 'Lỗi!',
-              text: err.response.data.message,
-              customClass: {
-                confirmButton: 'btn btn-success',
-              },
+            .catch(err => {
+              this.$swal({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: err.response.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
             })
-          }).finally(() => {
-            this.getContents()
-          })
+            .finally(() => {
+              this.getContents()
+            })
         }
       })
     },

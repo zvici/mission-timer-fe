@@ -31,7 +31,14 @@
             variant="flat-success"
             class="btn-icon rounded-circle"
           >
-            <feather-icon icon="EditIcon" />
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="gradient-info"
+              class="btn-icon rounded-circle"
+              @click="openModalAdd"
+            >
+              <feather-icon icon="EditIcon" />
+            </b-button>
           </b-button>
         </div>
       </template>

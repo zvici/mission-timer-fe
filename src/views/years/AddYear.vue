@@ -2,7 +2,7 @@
   <b-modal
     :visible="isVisible"
     centered
-    title="Thêm người dùng"
+    title="Thêm năm học"
     :hide-footer="true"
     @hide="onClose"
   >

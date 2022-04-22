@@ -5,24 +5,35 @@ export default [
     icon: 'HomeIcon',
   },
   {
-    title: 'Hoạt động',
+    title: 'Công tác',
     icon: 'CalendarIcon',
     children: [
       {
+        title: 'Công việc',
+        route: 'activity-page',
+        icon: 'ZapIcon',
+      },
+      {
         title: 'Nội dung',
         route: 'content-page',
-        icon: 'SunIcon',
+        icon: 'BookIcon',
       },
     ],
   },
   {
-    title: 'Năm học',
-    route: 'years-page',
-    icon: 'SunIcon',
-  },
-  {
-    title: 'Người dùng',
-    route: 'users-page',
-    icon: 'UsersIcon',
+    title: 'Tài khoản',
+    icon: 'AlignJustifyIcon',
+    children: [
+      {
+        title: 'Năm học',
+        route: 'years-page',
+        icon: 'SunIcon',
+      },
+      {
+        title: 'Người dùng',
+        route: 'users-page',
+        icon: 'UsersIcon',
+      },
+    ],
   },
 ]

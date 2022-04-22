@@ -1,6 +1,35 @@
 <template>
-  <div class="sidebar-wrapper d-flex justify-content-between flex-column flex-grow-1">
+  <div
+    class="sidebar-wrapper d-flex justify-content-between flex-column flex-grow-1"
+  >
     <div class="p-2">
+      <p>Chọn giảng viên</p>
+      <v-select
+        v-model="selected"
+        label="name"
+        :reduce="user => user._id"
+        :options="optionUser"
+        class="mb-1"
+      >
+        <template #option="{ name, avatar }">
+          <b-avatar
+            variant="primary"
+            size="2rem"
+            :src="avatar"
+            class="mr-1"
+          />
+          <span>{{ name }}</span>
+        </template>
+        <template #selected-option="{ name, avatar }">
+          <b-avatar
+            variant="primary"
+            size="2rem"
+            :src="avatar"
+            class="mr-1"
+          />
+          <span>{{ name }}</span>
+        </template>
+      </v-select>
       <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         aria-controls="sidebar-add-new-event"
@@ -47,9 +76,16 @@
 
 <script>
 import {
-  BButton, BFormGroup, BFormCheckboxGroup, BFormCheckbox, BImg,
+  BButton,
+  BFormGroup,
+  BFormCheckboxGroup,
+  BFormCheckbox,
+  BImg,
+  BAvatar,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import vSelect from 'vue-select'
+import userServices from '@/services/user'
 import useCalendarSidebar from './useCalendarSidebar'
 
 export default {
@@ -62,6 +98,8 @@ export default {
     BFormCheckbox,
     BFormGroup,
     BFormCheckboxGroup,
+    vSelect,
+    BAvatar,
   },
   props: {
     isEventHandlerSidebarActive: {
@@ -69,12 +107,17 @@ export default {
       require: true,
     },
   },
+  data() {
+    return {
+      selected: '',
+      optionUser: [],
+    }
+  },
+  created() {
+    this.getAllUser()
+  },
   setup() {
-    const {
-      calendarOptions,
-      selectedCalendars,
-      checkAll,
-    } = useCalendarSidebar()
+    const { calendarOptions, selectedCalendars, checkAll } = useCalendarSidebar()
 
     return {
       calendarOptions,
@@ -82,9 +125,28 @@ export default {
       checkAll,
     }
   },
+  methods: {
+    onClose() {
+      this.$emit('close-modal-add')
+    },
+    async getAllUser() {
+      try {
+        const res = await userServices.getUsers()
+        this.optionUser = res.data.data
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Notification',
+            icon: 'BellIcon',
+            text: error.response,
+            variant: 'warning',
+          },
+        })
+      }
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

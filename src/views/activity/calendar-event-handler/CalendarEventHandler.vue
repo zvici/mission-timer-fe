@@ -83,16 +83,12 @@
               rules="required"
             >
               <b-form-group
-                label="Loại lịch"
+                label="Chọn hoạt động"
                 label-for="calendar"
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-                  v-model="eventLocal.extendedProps.calendar"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="calendarOptions"
-                  label="label"
-                  :reduce="calendar => calendar.id"
+
                   input-id="id"
                 >
                   <template #option="{ color, label }">
@@ -122,7 +118,7 @@
               </b-form-group>
             </validation-provider>
             <!-- Calendar -->
-            <validation-provider
+            <!-- <validation-provider
               #default="validationContext"
               name="Year"
               rules="required"
@@ -147,7 +143,7 @@
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider>
+            </validation-provider> -->
             <!-- Start Date -->
             <validation-provider
               #default="validationContext"
