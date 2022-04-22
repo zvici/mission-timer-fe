@@ -5,17 +5,17 @@
       <b-card class="mb-0">
         <b-link class="brand-logo">
           <!-- <vuexy-logo /> -->
-          <h2 class="brand-text text-primary ml-1">
-            <img src="../../assets/images/logo/logo-hufi-new-v6.png">
+          <h2 class="brand-text text-primary ml-1 text-center">
+            <img
+              src="../../assets/images/logo/logo-hufi-new-v6.png"
+              alt="logo"
+              width="120"
+            >
+            <p class="mt-2">
+              QUẢN LÝ CÔNG TÁC KHÁC
+            </p>
           </h2>
         </b-link>
-        <!-- <b-card-title class="mb-1">
-          Chào mừng bạn 👋
-        </b-card-title>
-        <b-card-text class="mb-2">
-          Vui lòng đăng nhập
-        </b-card-text> -->
-
         <!-- form -->
         <validation-observer ref="loginValidation">
           <b-form
@@ -116,47 +116,6 @@
             </b-overlay>
           </b-form>
         </validation-observer>
-
-        <!-- <b-card-text class="text-center mt-2">
-          <span>New on our platform? </span>
-          <b-link :to="{name:'auth-register-v1'}">
-            <span>Create an account</span>
-          </b-link>
-        </b-card-text>
-
-        <div class="divider my-2">
-          <div class="divider-text">
-            or
-          </div>
-        </div> -->
-
-        <!-- social button -->
-        <!-- <div class="auth-footer-btn d-flex justify-content-center">
-          <b-button
-            href="javascript:void(0)"
-            variant="facebook"
-          >
-            <feather-icon icon="FacebookIcon" />
-          </b-button>
-          <b-button
-            href="javascript:void(0)"
-            variant="twitter"
-          >
-            <feather-icon icon="TwitterIcon" />
-          </b-button>
-          <b-button
-            href="javascript:void(0)"
-            variant="google"
-          >
-            <feather-icon icon="MailIcon" />
-          </b-button>
-          <b-button
-            href="javascript:void(0)"
-            variant="github"
-          >
-            <feather-icon icon="GithubIcon" />
-          </b-button>
-        </div> -->
       </b-card>
       <!-- /Login v1 -->
     </div>
@@ -176,6 +135,7 @@ import {
   BButton,
   BOverlay,
   BCard,
+  BCardTitle,
 } from 'bootstrap-vue'
 import { required } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
@@ -195,6 +155,7 @@ export default {
     ValidationProvider,
     ValidationObserver,
     BOverlay,
+    BCardTitle,
   },
   mixins: [togglePasswordVisibility],
   data() {

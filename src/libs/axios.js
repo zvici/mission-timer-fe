@@ -4,7 +4,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 const axiosIns = axios.create({
-  baseURL: 'https://mission-timer-be.herokuapp.com/api',
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',

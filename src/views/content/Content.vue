@@ -22,7 +22,7 @@
       >
         <b-button
           variant="primary"
-          @click="openModalAdd"
+          @click="openModalAdd(null)"
         >
           <feather-icon icon="PlusIcon" /> Thêm nội dung công tác
         </b-button>
@@ -57,7 +57,7 @@
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="gradient-info"
           class="btn-icon rounded-circle"
-          @click="openModalAdd"
+          @click="openModalAdd(data.item)"
         >
           <feather-icon icon="EditIcon" />
         </b-button>
@@ -83,6 +83,7 @@
     </b-table>
     <add-content
       :is-visible="isVisibleModalAdd"
+      :data-edit="dataEdit"
       @close-modal-add="closeModalAdd"
       @reload-data="getContents"
     />
@@ -144,6 +145,7 @@ export default {
       },
       isVisibleModalAdd: false,
       searchQuery: '',
+      dataEdit: null,
     }
   },
   computed: {
@@ -223,7 +225,8 @@ export default {
         }
       })
     },
-    openModalAdd() {
+    openModalAdd(data) {
+      this.dataEdit = data
       this.isVisibleModalAdd = true
     },
     closeModalAdd() {

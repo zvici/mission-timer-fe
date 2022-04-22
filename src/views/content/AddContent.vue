@@ -2,7 +2,7 @@
   <b-modal
     :visible="isVisible"
     centered
-    title="Thêm nội dung hoạt động"
+    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} nội dung hoạt động`"
     :hide-footer="true"
     @hide="onClose"
   >
@@ -43,12 +43,11 @@
             class="d-inline-block"
           >
             <b-button
-
               variant="primary"
               type="submit"
               @click="validationForm"
             >
-              Thêm
+              {{ dataEdit ? 'Cập nhật' : 'Thêm' }}
             </b-button>
           </b-overlay>
           <b-button
@@ -99,6 +98,12 @@ export default {
       default: false,
       type: Boolean,
     },
+    dataEdit: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data() {
     return {
@@ -109,6 +114,18 @@ export default {
       isBusy: false,
       required,
     }
+  },
+  computed: {
+    dataEditAndisVisible() {
+      return `${this.dataEdit}|${this.isVisible}`
+    },
+  },
+  watch: {
+    dataEditAndisVisible() {
+      if (this.dataEdit) {
+        this.form = { ...this.dataEdit }
+      } else this.onClearForm()
+    },
   },
   methods: {
     onClose() {
@@ -122,13 +139,22 @@ export default {
     },
     validationForm() {
       this.$refs.refFormObserver.validate().then(success => {
-        if (success) this.handleAdd()
+        if (success) this.handleReq()
       })
     },
-    async handleAdd() {
+    async handleReq() {
       this.isBusy = true
       try {
-        const res = await contentServices.addContent(this.form)
+        let res
+        if (this.dataEdit) {
+          res = await contentServices.updateContent({
+            // eslint-disable-next-line no-underscore-dangle
+            id: this.dataEdit._id,
+            ...this.form,
+          })
+        } else {
+          res = await contentServices.addContent(this.form)
+        }
         this.$toast({
           component: ToastificationContent,
           props: {

@@ -11,6 +11,11 @@ export default {
         label: 'Chấp nhận',
       },
       {
+        id: 'EXAM',
+        color: 'warning',
+        label: 'Chưa trả lời',
+      },
+      {
         id: 'ACADEMIC_STAFF',
         color: 'danger',
         label: 'Từ chối',
@@ -21,7 +26,7 @@ export default {
         label: 'Đã tham gia',
       },
     ],
-    selectedCalendars: ['STAFF', 'ACADEMIC_STAFF', 'MONITOR_EXAM'],
+    selectedCalendars: ['STAFF', 'ACADEMIC_STAFF', 'MONITOR_EXAM', 'EXAM'],
   },
   getters: {},
   mutations: {
@@ -34,8 +39,8 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .get(`/activity/${calendars || '[]'}`)
-          .then(response => resolve(response))
-          .catch(error => reject(error))
+          .then((response) => resolve(response))
+          .catch((error) => reject(error))
       })
     },
     addEvent(_ctx, { event }) {
@@ -50,8 +55,8 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post('/activity', body)
-          .then(response => resolve(response))
-          .catch(error => reject(error))
+          .then((response) => resolve(response))
+          .catch((error) => reject(error))
       })
     },
     updateEvent(_ctx, { event }) {
@@ -66,16 +71,16 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .put(`/activity/${event.id}`, body)
-          .then(response => resolve(response))
-          .catch(error => reject(error))
+          .then((response) => resolve(response))
+          .catch((error) => reject(error))
       })
     },
     removeEvent(_ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
           .delete(`/activity/${id}`)
-          .then(response => resolve(response))
-          .catch(error => reject(error))
+          .then((response) => resolve(response))
+          .catch((error) => reject(error))
       })
     },
   },
