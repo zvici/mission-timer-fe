@@ -2,7 +2,7 @@
   <b-modal
     :visible="isVisible"
     centered
-    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} nội dung hoạt động`"
+    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} chi tiết nội dung công tác`"
     :hide-footer="true"
     @hide="onClose"
   >
@@ -10,25 +10,81 @@
       <b-form @submit.prevent>
         <validation-provider
           #default="{ errors }"
+          name="Nội dung"
+          rules="required"
+        >
+          <b-form-group>
+            <label>Nội dung công tác</label>
+            <v-select
+              v-model="form.content"
+              :state="errors.length > 0 ? false : null"
+              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+              label="title"
+              :reduce="content => content._id"
+              :options="optionContents"
+            />
+            <small class="text-danger">{{
+              errors[0] && 'Vui lòng chọn nội dung'
+            }}</small>
+          </b-form-group>
+        </validation-provider>
+        <validation-provider
+          #default="{ errors }"
           name="Title"
           rules="required"
         >
           <b-form-group>
-            <label>Nội dung</label>
+            <label>Tiêu đề</label>
             <b-form-input
               v-model="form.title"
               :state="errors.length > 0 ? false : null"
-              autofocus
-              placeholder="Nhập nội dung"
+              placeholder="Nhập tiêu đề"
             />
             <small class="text-danger">{{
-              errors[0] && 'Vui lòng nhập nội dung'
+              errors[0] && 'Vui lòng nhập tiêu đề'
+            }}</small>
+          </b-form-group>
+        </validation-provider>
+        <validation-provider
+          #default="{ errors }"
+          name="Loại"
+          rules="required"
+        >
+          <b-form-group>
+            <label>Loại chi tiết nội dung công tác</label>
+            <v-select
+              v-model="form.type"
+              :state="errors.length > 0 ? false : null"
+              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+              label="name"
+              :reduce="type => type.id"
+              :options="optionTypes"
+            />
+            <small class="text-danger">{{
+              errors[0] && 'Vui lòng loại nội dung'
+            }}</small>
+          </b-form-group>
+        </validation-provider>
+        <validation-provider
+          #default="{ errors }"
+          name="Định mức"
+          rules="required"
+        >
+          <b-form-group>
+            <label>Định mức theo quy định</label>
+            <b-form-input
+              v-model="form.quota"
+              :state="errors.length > 0 ? false : null"
+              placeholder="Nhập định mức theo quy định"
+            />
+            <small class="text-danger">{{
+              errors[0] && 'Vui lòng nhập định mức theo quy định'
             }}</small>
           </b-form-group>
         </validation-provider>
         <b-form-group>
           <label>Mô tả</label>
-          <b-form-input
+          <b-form-textarea
             v-model="form.description"
             placeholder="Nhập mô tả"
           />
@@ -47,7 +103,7 @@
               type="submit"
               @click="validationForm"
             >
-              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} nội dung
+              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} chi tiết nội dung
             </b-button>
           </b-overlay>
           <b-button
@@ -71,11 +127,14 @@ import {
   VBTooltip,
   BButton,
   BOverlay,
+  BFormTextarea,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
+import vSelect from 'vue-select'
+import activityServices from '@/services/actitvity'
 import contentServices from '@/services/content'
 
 export default {
@@ -84,10 +143,12 @@ export default {
     BFormGroup,
     BModal,
     BFormInput,
+    BFormTextarea,
     BButton,
     BOverlay,
     ValidationProvider,
     ValidationObserver,
+    vSelect,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -110,9 +171,27 @@ export default {
       form: {
         title: '',
         description: '',
+        quota: '',
+        content: '',
+        type: '',
       },
       isBusy: false,
       required,
+      optionContents: [],
+      optionTypes: [
+        {
+          id: 'STAFF',
+          name: 'Tự điểm danh',
+        },
+        {
+          id: 'MINISTRY',
+          name: 'Giáo vụ điểm danh',
+        },
+        {
+          id: 'MONITOR_EXAM',
+          name: 'Canh thi',
+        },
+      ],
     }
   },
   computed: {
@@ -125,6 +204,7 @@ export default {
       if (this.dataEdit) {
         this.form = { ...this.dataEdit }
       } else this.onClearForm()
+      this.getContents()
     },
   },
   methods: {
@@ -135,6 +215,9 @@ export default {
       this.form = {
         title: '',
         description: '',
+        quota: '',
+        content: '',
+        type: '',
       }
     },
     validationForm() {
@@ -147,13 +230,13 @@ export default {
       try {
         let res
         if (this.dataEdit) {
-          res = await contentServices.updateContent({
+          res = await activityServices.updateActivities({
             // eslint-disable-next-line no-underscore-dangle
             id: this.dataEdit._id,
             ...this.form,
           })
         } else {
-          res = await contentServices.addContent(this.form)
+          res = await activityServices.createActivities(this.form)
         }
         this.$toast({
           component: ToastificationContent,
@@ -181,6 +264,28 @@ export default {
         this.isBusy = false
       }
     },
+    async getContents() {
+      this.isBusy = true
+      try {
+        const res = await contentServices.getContens()
+        this.optionContents = res.data.data.contents
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
+    },
   },
 }
 </script>
+<style lang="scss">
+@import '@core/scss/vue/libs/vue-select.scss';
+</style>

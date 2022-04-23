@@ -1,9 +1,24 @@
 <template>
-  <b-card title="Quản lý nội dung công tác">
+  <b-card title="Quản lý chi tiết nội dung công tác">
     <b-row class="mb-1">
       <b-col
         cols="12"
-        md="6"
+        md="3"
+      >
+        <div class="">
+          <v-select
+            v-model="selectedContent"
+            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+            label="title"
+            :reduce="content => content._id"
+            :options="optionContents"
+            placeholder="Lọc theo: Tất cả"
+          />
+        </div>
+      </b-col>
+      <b-col
+        cols="12"
+        md="5"
       >
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
@@ -11,20 +26,20 @@
           </b-input-group-prepend>
           <b-form-input
             v-model="searchQuery"
-            placeholder="Tìm kiếm nội dung công tác"
+            placeholder="Tìm kiếm chi tiết nội dung công tác"
           />
         </b-input-group>
       </b-col>
       <b-col
         class="d-flex justify-content-end"
         cols="12"
-        md="6"
+        md="4"
       >
         <b-button
           variant="primary"
           @click="openModalAdd(null)"
         >
-          <feather-icon icon="PlusIcon" /> Thêm nội dung công tác
+          <feather-icon icon="PlusIcon" /> Thêm chi tiết nội dung công tác
         </b-button>
       </b-col>
     </b-row>
@@ -39,6 +54,26 @@
       <!-- A virtual column -->
       <template #cell(index)="data">
         {{ data.index + 1 }}
+      </template>
+      <template #cell(type)="data">
+        <b-badge
+          v-if="data.value === 'STAFF'"
+          variant="primary"
+        >
+          Tự điểm danh
+        </b-badge>
+        <b-badge
+          v-if="data.value === 'MINISTRY'"
+          variant="success"
+        >
+          Giáo vụ điểm danh
+        </b-badge>
+        <b-badge
+          v-if="data.value === 'MONITOR_EXAM'"
+          variant="warning"
+        >
+          Canh thi
+        </b-badge>
       </template>
       <template #cell(createdBy)="data">
         <span>{{ data.value.name }}</span>
@@ -83,11 +118,11 @@
         </div>
       </template>
     </b-table>
-    <add-content
+    <add-content-detail
       :is-visible="isVisibleModalAdd"
       :data-edit="dataEdit"
       @close-modal-add="closeModalAdd"
-      @reload-data="getContents"
+      @reload-data="getActivities"
     />
   </b-card>
 </template>
@@ -104,11 +139,14 @@ import {
   BRow,
   BCol,
   VBTooltip,
+  BBadge,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import contentServices from '@/services/content'
-import AddContent from './AddContent.vue'
+import activityServices from '@/services/actitvity'
+import AddContentDetail from './AddContentDetail.vue'
 
 export default {
   components: {
@@ -121,7 +159,9 @@ export default {
     BButton,
     BRow,
     BCol,
-    AddContent,
+    BBadge,
+    AddContentDetail,
+    vSelect,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -131,8 +171,10 @@ export default {
     return {
       fields: [
         { key: 'index', label: 'STT' },
-        { key: 'title', label: 'Nội dung' },
+        { key: 'title', label: 'Tiêu đề' },
+        { key: 'quota', label: 'Định mức' },
         { key: 'description', label: 'Mô tả' },
+        { key: 'type', label: 'Loại' },
         { key: 'createdBy', label: 'Tạo bởi' },
         { key: 'createdAt', label: 'Ngày tạo' },
         { key: 'updatedBy', label: 'Cập nhật bởi' },
@@ -148,6 +190,8 @@ export default {
       isVisibleModalAdd: false,
       searchQuery: '',
       dataEdit: null,
+      optionContents: [],
+      selectedContent: '',
     }
   },
   computed: {
@@ -161,22 +205,32 @@ export default {
       return this.items
     },
   },
+  watch: {
+    selectedContent() {
+      this.getActivities()
+    },
+  },
   created() {
     this.getContents()
+    this.getActivities()
   },
   methods: {
-    async getContents() {
+    async getActivities() {
       this.isBusy = true
       try {
-        const res = await contentServices.getContens()
-        this.items = res.data.data.contents
+        const res = await activityServices.getActivities({
+          content: this.selectedContent,
+        })
+        this.items = res.data.data.activities
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: err.response.data.message,
+            text: err.response.data.message
+              ? err.response.data.message
+              : err.toString(),
             variant: 'warning',
           },
         })
@@ -222,10 +276,32 @@ export default {
               })
             })
             .finally(() => {
-              this.getContents()
+              this.getActivities()
             })
         }
       })
+    },
+    async getContents() {
+      this.isBusy = true
+      try {
+        const res = await contentServices.getContens()
+        this.optionContents = [
+          { _id: '', title: 'Lọc theo: Tất cả' },
+          ...res.data.data.contents,
+        ]
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
     },
     openModalAdd(data) {
       this.dataEdit = data
@@ -238,4 +314,6 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+@import '@core/scss/vue/libs/vue-select.scss';
+</style>

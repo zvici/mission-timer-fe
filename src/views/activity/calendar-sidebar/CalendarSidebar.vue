@@ -135,7 +135,6 @@ export default {
         this.optionUser = res.data.data
       } catch (error) {
         this.$toast({
-          component: ToastificationContent,
           props: {
             title: 'Notification',
             icon: 'BellIcon',

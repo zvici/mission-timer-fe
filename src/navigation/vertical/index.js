@@ -14,6 +14,11 @@ export default [
         icon: 'ZapIcon',
       },
       {
+        title: 'Chi tiết nội dung',
+        route: 'content-detail-page',
+        icon: 'BookIcon',
+      },
+      {
         title: 'Nội dung',
         route: 'content-page',
         icon: 'BookIcon',

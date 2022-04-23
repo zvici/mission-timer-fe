@@ -1,8 +1,27 @@
 import axiosIns from '@/libs/axios'
 
+const baseUrl = '/activity'
+
 const activityServices = {
-  // Add activity detail
-  addAssignee: ({ activity, assignee }) => axiosIns.post('/activity-detail', { activity, assignee }),
-  getListActivityDetailByID: id => axiosIns.get(`/activity-detail/list/${id}`),
+  getActivities: ({ content }) => axiosIns.get(`${baseUrl}?content=${content}`),
+  createActivities: ({
+    title, description, quota, content, type,
+  }) => axiosIns.post(`${baseUrl}`, {
+    title,
+    description,
+    quota,
+    content,
+    type,
+  }),
+  updateActivities: ({
+    id, title, description, quota, content, type,
+  }) => axiosIns.put(`${baseUrl}/${id}`, {
+    id,
+    title,
+    description,
+    quota,
+    content,
+    type,
+  }),
 }
 export default activityServices
