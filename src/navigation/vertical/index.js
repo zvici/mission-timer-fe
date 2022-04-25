@@ -26,14 +26,35 @@ export default [
     ],
   },
   {
-    title: 'Tài khoản',
-    icon: 'AlignJustifyIcon',
+    title: 'Quản lý',
+    icon: 'BookIcon',
     children: [
       {
         title: 'Năm học',
         route: 'years-page',
-        icon: 'SunIcon',
+        icon: 'BookIcon',
       },
+      {
+        title: 'Học kỳ',
+        route: 'semester-page',
+        icon: 'BookIcon',
+      },
+      {
+        title: 'Bộ môn',
+        route: 'subject-page',
+        icon: 'BookIcon',
+      },
+      {
+        title: 'Khoa',
+        route: 'department-page',
+        icon: 'BookIcon',
+      },
+    ],
+  },
+  {
+    title: 'Tài khoản',
+    icon: 'AlignJustifyIcon',
+    children: [
       {
         title: 'Người dùng',
         route: 'users-page',
