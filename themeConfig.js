@@ -9,7 +9,7 @@ export const $themeBreakpoints = {}
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: 'Mission Timer', // Will update name in navigation menu (Branding)
+    appName: 'OWMS', // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require
     appLogoImage: require('@/assets/images/logo/logo_hufi.png'), // Will update logo in navigation menu (Branding)
   },
