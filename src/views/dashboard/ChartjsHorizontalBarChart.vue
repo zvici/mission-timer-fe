@@ -31,7 +31,7 @@ import {
 } from 'bootstrap-vue'
 import { $themeColors } from '@themeConfig'
 import ChartjsComponentHorizontalBarChart from './charts-components/ChartjsComponentHorizontalBarChart.vue'
-import chartjsData from './chartjsData'
+import chartjsData from './chartjsData.js'
 
 export default {
   components: {

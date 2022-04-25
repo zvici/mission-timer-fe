@@ -1,10 +1,7 @@
 <template>
   <b-card title="Quản lý người dùng">
     <b-row class="mb-1">
-      <b-col
-        cols="12"
-        md="6"
-      >
+      <b-col cols="12" md="6">
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
@@ -12,15 +9,8 @@
           <b-form-input placeholder="Tìm kiếm nhân viên" />
         </b-input-group>
       </b-col>
-      <b-col
-        class="d-flex justify-content-end"
-        cols="12"
-        md="6"
-      >
-        <b-button
-          variant="outline-primary"
-          @click="openModalAdd"
-        >
+      <b-col class="d-flex justify-content-end" cols="12" md="6">
+        <b-button variant="outline-primary" @click="openModalAdd">
           <feather-icon icon="UserPlusIcon" /> Thêm người dùng
         </b-button>
         <b-button
@@ -47,10 +37,7 @@
       </template>
       <template #cell(name)="data">
         <div class="d-flex align-items-center">
-          <b-avatar
-            size="lg"
-            :src="data.item.avatar"
-          />
+          <b-avatar size="lg" :src="data.item.avatar" />
           <div class="pl-2 d-flex flex-column">
             <span class="">
               {{ data.item.name }}
@@ -60,22 +47,13 @@
         </div>
       </template>
       <template #cell(role)="data">
-        <b-badge
-          v-if="data.value === 'ADMIN'"
-          variant="light-dark"
-        >
+        <b-badge v-if="data.value === 'ADMIN'" variant="light-dark">
           Admin
         </b-badge>
-        <b-badge
-          v-if="data.value === 'ACADEMIC_STAFF'"
-          variant="light-info"
-        >
+        <b-badge v-if="data.value === 'ACADEMIC_STAFF'" variant="light-info">
           Giáo vụ
         </b-badge>
-        <b-badge
-          v-if="data.value === 'STAFF'"
-          variant="light-primary"
-        >
+        <b-badge v-if="data.value === 'STAFF'" variant="light-primary">
           Nhân viên
         </b-badge>
       </template>
@@ -183,8 +161,11 @@ export default {
       try {
         const res = await userServices.getUsers()
         this.items = res.data.data
-      } catch {
-        console.log('looix roi')
+      } catch (error) {
+        window.open(
+          `https://stackoverflow.com/search?q=${error.toString()}`,
+          '_blank'
+        )
       } finally {
         this.isBusy = false
       }

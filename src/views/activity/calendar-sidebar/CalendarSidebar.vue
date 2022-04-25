@@ -1,6 +1,11 @@
 <template>
   <div
-    class="sidebar-wrapper d-flex justify-content-between flex-column flex-grow-1"
+    class="
+      sidebar-wrapper
+      d-flex
+      justify-content-between
+      flex-column flex-grow-1
+    "
   >
     <div class="p-2">
       <b-button
@@ -17,10 +22,7 @@
         <h5 class="app-label section-label mb-1">
           <span class="align-middle">Xem theo</span>
         </h5>
-        <b-form-checkbox
-          v-model="checkAll"
-          class="mb-1"
-        >
+        <b-form-checkbox v-model="checkAll" class="mb-1">
           Tất cả
         </b-form-checkbox>
         <b-form-group>
@@ -80,17 +82,9 @@ export default {
       require: true,
     },
   },
-  data() {
-    return {
-      selected: '',
-      optionUser: [],
-    }
-  },
-  created() {
-    this.getAllUser()
-  },
   setup() {
-    const { calendarOptions, selectedCalendars, checkAll } = useCalendarSidebar()
+    const { calendarOptions, selectedCalendars, checkAll } =
+      useCalendarSidebar()
 
     return {
       calendarOptions,
@@ -101,21 +95,6 @@ export default {
   methods: {
     onClose() {
       this.$emit('close-modal-add')
-    },
-    async getAllUser() {
-      try {
-        const res = await userServices.getUsers()
-        this.optionUser = res.data.data
-      } catch (error) {
-        this.$toast({
-          props: {
-            title: 'Notification',
-            icon: 'BellIcon',
-            text: error.response,
-            variant: 'warning',
-          },
-        })
-      }
     },
   },
 }

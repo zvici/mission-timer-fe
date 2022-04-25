@@ -21,6 +21,30 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/department',
+      name: 'department-page',
+      component: () => import('@/views/department/Department.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/semester',
+      name: 'semester-page',
+      component: () => import('@/views/semester/Semester.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/subject',
+      name: 'subject-page',
+      component: () => import('@/views/subject/Subject.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/content',
       name: 'content-page',
       component: () => import('@/views/content/Content.vue'),

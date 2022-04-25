@@ -21,6 +21,7 @@ import '@/libs/filter'
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+
 // SweetAlert
 Vue.use(VueSweetalert2)
 
