@@ -3,33 +3,6 @@
     class="sidebar-wrapper d-flex justify-content-between flex-column flex-grow-1"
   >
     <div class="p-2">
-      <p>Chọn giảng viên</p>
-      <v-select
-        v-model="selected"
-        label="name"
-        :reduce="user => user._id"
-        :options="optionUser"
-        class="mb-1"
-      >
-        <template #option="{ name, avatar }">
-          <b-avatar
-            variant="primary"
-            size="2rem"
-            :src="avatar"
-            class="mr-1"
-          />
-          <span>{{ name }}</span>
-        </template>
-        <template #selected-option="{ name, avatar }">
-          <b-avatar
-            variant="primary"
-            size="2rem"
-            :src="avatar"
-            class="mr-1"
-          />
-          <span>{{ name }}</span>
-        </template>
-      </v-select>
       <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         aria-controls="sidebar-add-new-event"

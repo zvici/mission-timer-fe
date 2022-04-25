@@ -266,15 +266,15 @@ export default function userCalendar() {
         calendars: selectedCalendars.value,
       })
       .then(response => {
-        const { activities } = response.data.data
+        const { tasks } = response.data.data
         successCallback(
-          activities.map(item => ({
+          tasks.map(item => ({
             ...item,
             start: item.startDate,
             end: item.endDate,
-            title: item.content,
+            title: item.description,
             extendedProps: {
-              calendar: item.rollUpType,
+              calendar: 'STAFF',
             },
             // eslint-disable-next-line no-underscore-dangle
             id: item._id,

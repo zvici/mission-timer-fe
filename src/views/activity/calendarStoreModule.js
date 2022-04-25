@@ -8,25 +8,20 @@ export default {
       {
         id: 'STAFF',
         color: 'success',
-        label: 'Chấp nhận',
+        label: 'Tự điểm danh',
       },
       {
-        id: 'EXAM',
+        id: 'MINISTRY',
         color: 'warning',
-        label: 'Chưa trả lời',
-      },
-      {
-        id: 'ACADEMIC_STAFF',
-        color: 'danger',
-        label: 'Từ chối',
+        label: 'Giáo vụ điểm danh',
       },
       {
         id: 'MONITOR_EXAM',
         color: 'info',
-        label: 'Đã tham gia',
+        label: 'Canh thi',
       },
     ],
-    selectedCalendars: ['STAFF', 'ACADEMIC_STAFF', 'MONITOR_EXAM', 'EXAM'],
+    selectedCalendars: ['STAFF', 'MINISTRY', 'MONITOR_EXAM'],
   },
   getters: {},
   mutations: {
@@ -38,9 +33,9 @@ export default {
     fetchEvents(_ctx, { calendars }) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`/activity/${calendars || '[]'}`)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .get('/task')
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     addEvent(_ctx, { event }) {
@@ -55,8 +50,8 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post('/activity', body)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     updateEvent(_ctx, { event }) {
@@ -71,16 +66,16 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .put(`/activity/${event.id}`, body)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     removeEvent(_ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
           .delete(`/activity/${id}`)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
   },

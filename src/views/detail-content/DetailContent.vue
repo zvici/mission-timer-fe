@@ -56,24 +56,26 @@
         {{ data.index + 1 }}
       </template>
       <template #cell(type)="data">
-        <b-badge
-          v-if="data.value === 'STAFF'"
-          variant="primary"
-        >
-          Tự điểm danh
-        </b-badge>
-        <b-badge
-          v-if="data.value === 'MINISTRY'"
-          variant="success"
-        >
-          Giáo vụ điểm danh
-        </b-badge>
-        <b-badge
-          v-if="data.value === 'MONITOR_EXAM'"
-          variant="warning"
-        >
-          Canh thi
-        </b-badge>
+        <div class="text-center">
+          <b-badge
+            v-if="data.value === 'STAFF'"
+            variant="primary"
+          >
+            Tự điểm danh
+          </b-badge>
+          <b-badge
+            v-if="data.value === 'MINISTRY'"
+            variant="success"
+          >
+            Giáo vụ điểm danh
+          </b-badge>
+          <b-badge
+            v-if="data.value === 'MONITOR_EXAM'"
+            variant="warning"
+          >
+            Canh thi
+          </b-badge>
+        </div>
       </template>
       <template #cell(createdBy)="data">
         <span>{{ data.value.name }}</span>
