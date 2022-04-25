@@ -94,7 +94,7 @@ export default function userCalendar() {
   const updateEventInCalendar = (
     _updatedEventData,
     _propsToUpdate,
-    _extendedPropsToUpdate,
+    _extendedPropsToUpdate
   ) => {
     toast({
       component: ToastificationContent,
@@ -137,7 +137,7 @@ export default function userCalendar() {
   // ------------------------------------------------
   // (UI) removeEventInCalendar
   // ------------------------------------------------
-  const removeEventInCalendar = eventId => {
+  const removeEventInCalendar = (eventId) => {
     toast({
       component: ToastificationContent,
       props: {
@@ -154,7 +154,7 @@ export default function userCalendar() {
   // ? It will return just event data from fullCalendar's EventApi which is not required for event mutations and other tasks
   // ! You need to update below function as per your extendedProps
   // ------------------------------------------------
-  const grabEventDataFromEventApi = eventApi => {
+  const grabEventDataFromEventApi = (eventApi) => {
     const {
       id,
       title,
@@ -181,7 +181,7 @@ export default function userCalendar() {
   // ------------------------------------------------
   // addEvent
   // ------------------------------------------------
-  const addEvent = eventData => {
+  const addEvent = (eventData) => {
     store.dispatch('calendar/addEvent', { event: eventData }).then(() => {
       // eslint-disable-next-line no-use-before-define
       refetchEvents()
@@ -191,10 +191,10 @@ export default function userCalendar() {
   // ------------------------------------------------
   // updateEvent
   // ------------------------------------------------
-  const updateEvent = eventData => {
+  const updateEvent = (eventData) => {
     store
       .dispatch('calendar/updateEvent', { event: eventData })
-      .then(response => {
+      .then((response) => {
         toast({
           component: ToastificationContent,
           props: {
@@ -244,7 +244,7 @@ export default function userCalendar() {
   // selectedCalendars
   // ------------------------------------------------
   const selectedCalendars = computed(
-    () => store.state.calendar.selectedCalendars,
+    () => store.state.calendar.selectedCalendars
   )
 
   watch(selectedCalendars, () => {
@@ -265,10 +265,10 @@ export default function userCalendar() {
       .dispatch('calendar/fetchEvents', {
         calendars: selectedCalendars.value,
       })
-      .then(response => {
+      .then((response) => {
         const { tasks } = response.data.data
         successCallback(
-          tasks.map(item => ({
+          tasks.map((item) => ({
             ...item,
             start: item.startDate,
             end: item.endDate,
@@ -278,7 +278,7 @@ export default function userCalendar() {
             },
             // eslint-disable-next-line no-underscore-dangle
             id: item._id,
-          })),
+          }))
         )
       })
       .catch(() => {
@@ -342,7 +342,8 @@ export default function userCalendar() {
 
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName =
+        calendarsColor[calendarEvent._def.extendedProps.calendar]
       return [
         // Background Color
         `bg-light-${colorName}`,
@@ -379,7 +380,7 @@ export default function userCalendar() {
         ```
       */
       event.value = JSON.parse(
-        JSON.stringify(Object.assign(event.value, { start: info.date })),
+        JSON.stringify(Object.assign(event.value, { start: info.date }))
       )
       // eslint-disable-next-line no-use-before-define
       isEventHandlerSidebarActive.value = true

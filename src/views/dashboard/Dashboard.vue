@@ -8,6 +8,7 @@
 
 <script>
 import { BRow, BCol } from 'bootstrap-vue'
+import OneSignalVue from 'onesignal-vue'
 import ChartjsHorizontalBarChart from './ChartjsHorizontalBarChart.vue'
 
 export default {
@@ -15,6 +16,14 @@ export default {
     BRow,
     BCol,
     ChartjsHorizontalBarChart,
+  },
+  beforeCreate() {
+    this.$OneSignal.showSlidedownPrompt()
+  },
+  created() {
+    OneSignal.on('subscriptionChange', function (isSubscribed) {
+      console.log("The user's subscription state is now:", isSubscribed)
+    })
   },
 }
 </script>
