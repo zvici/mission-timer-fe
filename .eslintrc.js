@@ -14,8 +14,12 @@ module.exports = {
     semi: ['error', 'never'],
     'max-len': 'off',
     'linebreak-style': 'off',
-    camelcase: ['error', { properties: 'never', ignoreDestructuring: true, ignoreImports: true }],
-    'arrow-parens': ['error', 'as-needed'],
+    camelcase: [
+      'error',
+      { properties: 'never', ignoreDestructuring: true, ignoreImports: true },
+    ],
     'vue/multiline-html-element-content-newline': 'off',
+    'implicit-arrow-linebreak': 'off',
+    'object-curly-newline': 'off',
   },
 }

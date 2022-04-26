@@ -1,10 +1,7 @@
 <template>
   <b-card title="Quản lý nội dung công tác">
     <b-row class="mb-1">
-      <b-col
-        cols="12"
-        md="6"
-      >
+      <b-col cols="12" md="6">
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
@@ -15,22 +12,15 @@
           />
         </b-input-group>
       </b-col>
-      <b-col
-        class="d-flex justify-content-end"
-        cols="12"
-        md="6"
-      >
-        <b-button
-          variant="primary"
-          @click="openModalAdd(null)"
-        >
-          <feather-icon icon="PlusIcon" /> Thêm nội dung công tác
+      <b-col class="d-flex justify-content-end" cols="12" md="6">
+        <b-button variant="primary" @click="openSemesterModal(null)">
+          <feather-icon icon="PlusIcon" /> Thêm học kỳ
         </b-button>
       </b-col>
     </b-row>
     <b-table
       :fields="fields"
-      :items="resultQuery"
+      :items="semesters"
       responsive="sm"
       bordered
       show-empty
@@ -40,14 +30,14 @@
       <template #cell(index)="data">
         {{ data.index + 1 }}
       </template>
-      <template #cell(createdBy)="data">
-        <span>{{ data.value.name }}</span>
+      <template #cell(year)="data">
+        <span>{{ getYearName(data.value) }}</span>
+      </template>
+      <template #cell(startDate)="data">
+        <span>{{ data.value | filterDate }}</span>
       </template>
       <template #cell(createdAt)="data">
         <span>{{ data.value | filterDateTime }}</span>
-      </template>
-      <template #cell(updatedBy)="data">
-        <span>{{ data.value.name }}</span>
       </template>
       <template #cell(updatedAt)="data">
         <span>{{ data.value | filterDateTime }}</span>
@@ -58,7 +48,7 @@
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             variant="gradient-info"
             class="btn-icon rounded-circle"
-            @click="openModalAdd(data.item)"
+            @click="openSemesterModal(data.item)"
           >
             <feather-icon icon="EditIcon" />
           </b-button>
@@ -83,11 +73,14 @@
         </div>
       </template>
     </b-table>
-    <add-content
-      :is-visible="isVisibleModalAdd"
-      :data-edit="dataEdit"
-      @close-modal-add="closeModalAdd"
-      @reload-data="getContents"
+    <semester-modal
+      :is-visible="semesterModal.isVisible"
+      :semester="semesterModal.semester"
+      :years="years"
+      @close-semester-modal="closeSemesterModal"
+      @reload-data="getSemesters"
+      @create-semester="createSemester"
+      @update-semester="updateSemester"
     />
   </b-card>
 </template>
@@ -107,8 +100,9 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import contentServices from '@/services/content'
-import AddContent from './AddContent.vue'
+import semesterService from '@/services/semester'
+import yearService from '@/services/year'
+import SemesterModal from './SemesterModal.vue'
 
 export default {
   components: {
@@ -121,7 +115,7 @@ export default {
     BButton,
     BRow,
     BCol,
-    AddContent,
+    SemesterModal,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -129,54 +123,54 @@ export default {
   },
   data() {
     return {
+      // table column
       fields: [
         { key: 'index', label: 'STT' },
-        { key: 'title', label: 'Nội dung' },
-        { key: 'description', label: 'Mô tả' },
-        { key: 'createdBy', label: 'Tạo bởi' },
+        { key: 'name', label: 'Học kỳ' },
+        { key: 'year', label: 'Năm học' },
+        { key: 'startDate', label: 'Ngày bắt đầu' },
         { key: 'createdAt', label: 'Ngày tạo' },
-        { key: 'updatedBy', label: 'Cập nhật bởi' },
         { key: 'updatedAt', label: 'Ngày cập nhật' },
         { key: 'action', label: 'Hành động' },
       ],
-      items: [],
+
+      semesters: [],
+      years: [],
+
+      // loading
       isBusy: true,
       empty: {
         text: 'Không có dữ liệu',
         status: 'text-primary',
       },
-      isVisibleModalAdd: false,
       searchQuery: '',
-      dataEdit: null,
+
+      semesterModal: {
+        isVisible: false,
+        semester: null,
+      },
     }
   },
-  computed: {
-    resultQuery() {
-      if (this.searchQuery) {
-        return this.items.filter(item => this.searchQuery
-          .toLowerCase()
-          .split(' ')
-          .every(v => item.title.toLowerCase().includes(v)))
-      }
-      return this.items
-    },
+
+  async created() {
+    await this.getSemesters()
+    await this.getYears()
   },
-  created() {
-    this.getContents()
-  },
+
   methods: {
-    async getContents() {
+    // get semeters api
+    async getSemesters() {
       this.isBusy = true
       try {
-        const res = await contentServices.getContens()
-        this.items = res.data.data.contents
+        const response = await semesterService.getAll()
+        this.semesters = response.data.data.semesters
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: err.response.data.message,
+            text: err.response?.data.message,
             variant: 'warning',
           },
         })
@@ -184,55 +178,84 @@ export default {
         this.isBusy = false
       }
     },
-    async deleteContent(id) {
-      this.$swal({
-        title: 'Bạn chắc chứ?',
-        text: 'Bạn sẽ không thể hoàn tác hành động này!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Vâng, tôi sẽ xoá nó!',
-        cancelButtonText: 'Đóng',
-        customClass: {
-          confirmButton: 'btn btn-outline-danger',
-          cancelButton: 'btn btn-primary ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          contentServices
-            .deleteContent(id)
-            .then(res => {
-              this.$swal({
-                icon: 'success',
-                title: 'Đã xoá!',
-                text: res.data.message,
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                },
-              })
-            })
-            .catch(err => {
-              this.$swal({
-                icon: 'error',
-                title: 'Lỗi!',
-                text: err.response.data.message,
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                },
-              })
-            })
-            .finally(() => {
-              this.getContents()
-            })
-        }
-      })
+
+    // create new semester api
+    async createSemester(payload) {
+      this.isBusy = true
+      try {
+        await semesterService.create(payload)
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response?.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
     },
-    openModalAdd(data) {
-      this.dataEdit = data
-      this.isVisibleModalAdd = true
+
+    // udpdate semester api
+    async updateSemester(payload) {
+      this.isBusy = true
+      try {
+        await semesterService.update(payload)
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response?.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
     },
-    closeModalAdd() {
-      this.isVisibleModalAdd = false
+
+    // get years from api
+    async getYears() {
+      this.isBusy = true
+      try {
+        const response = await yearService.getYears()
+        this.years = response.data.data.years
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response?.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
+    },
+
+    // get year name from year id
+    getYearName(id) {
+      // eslint-disable-next-line no-underscore-dangle
+      const year = this.years.find((y) => y._id === id)
+
+      if (!year) return id
+
+      return year.name
+    },
+
+    openSemesterModal(data) {
+      this.semesterModal.semester = data
+      this.semesterModal.isVisible = true
+    },
+    closeSemesterModal() {
+      this.semesterModal.isVisible = false
     },
   },
 }
