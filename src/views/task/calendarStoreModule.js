@@ -30,7 +30,8 @@ export default {
     },
   },
   actions: {
-    fetchEvents(_ctx, { calendars }) {
+    fetchEvents(_ctx, { calendars, event }) {
+      console.log('event', event)
       return new Promise((resolve, reject) => {
         axios
           .get('/task')

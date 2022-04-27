@@ -14,7 +14,7 @@
           Page Not Found 🕵🏻‍♀️
         </h2>
         <p class="mb-2">
-          Oops! 😖 The requested URL was not found on this server.
+          😭 Trong thế giới internet rộng lớn này, xin đừng để lạc mất nhau.
         </p>
 
         <b-button
@@ -22,7 +22,7 @@
           class="mb-2 btn-sm-block"
           :to="{path:'/'}"
         >
-          Back to home
+          Quay trở lại trang chủ
         </b-button>
 
         <!-- image -->

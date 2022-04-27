@@ -85,9 +85,9 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/activity',
-      name: 'activity-page',
-      component: () => import('@/views/activity/Calendar.vue'),
+      path: '/task',
+      name: 'task-page',
+      component: () => import('@/views/task/Calendar.vue'),
       meta: {
         isRedirectIfLoggedIn: true,
       },

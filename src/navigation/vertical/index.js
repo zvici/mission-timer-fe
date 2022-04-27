@@ -10,7 +10,7 @@ export default [
     children: [
       {
         title: 'Công việc',
-        route: 'activity-page',
+        route: 'task-page',
         icon: 'ZapIcon',
       },
       {
