@@ -1,5 +1,5 @@
 <template>
-  <b-card title="Quản lý chi tiết nội dung công tác">
+  <b-card title="Quản lý học kỳ">
     <b-row class="mb-1">
       <b-col cols="12" md="3">
         <div class="">
@@ -153,6 +153,7 @@ export default {
         { key: 'index', label: 'STT' },
         { key: 'name', label: 'Tên' },
         { key: 'year', label: 'Năm' },
+        { key: 'description', label: 'Mô tả' },
         { key: 'startDate', label: 'Ngày bắt đầu' },
         { key: 'endDate', label: 'Ngày kết thúc' },
         { key: 'createdBy', label: 'Tạo bởi' },

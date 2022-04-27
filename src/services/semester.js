@@ -13,7 +13,6 @@ const semesterServices = {
       endDate,
       description,
     }),
-
   update: ({ _id, name, year, startDate, endDate, description }) =>
     axiosIns.put(`${baseUrl}/${_id}`, {
       name,

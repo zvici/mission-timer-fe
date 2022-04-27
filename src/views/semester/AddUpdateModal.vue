@@ -2,7 +2,7 @@
   <b-modal
     :visible="isVisible"
     centered
-    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} chi tiết nội dung công tác`"
+    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} học kỳ`"
     :hide-footer="true"
     @hide="onClose"
   >
@@ -10,74 +10,64 @@
       <b-form @submit.prevent>
         <validation-provider
           #default="{ errors }"
-          name="Nội dung"
+          name="Năm học"
           rules="required"
         >
           <b-form-group>
-            <label>Nội dung công tác</label>
+            <label>Năm học</label>
             <v-select
-              v-model="form.content"
-              :state="errors.length > 0 ? false : null"
-              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-              label="title"
-              :reduce="(content) => content._id"
-              :options="optionContents"
-            />
-            <small class="text-danger">{{
-              errors[0] && 'Vui lòng chọn nội dung'
-            }}</small>
-          </b-form-group>
-        </validation-provider>
-        <validation-provider
-          #default="{ errors }"
-          name="Title"
-          rules="required"
-        >
-          <b-form-group>
-            <label>Tiêu đề</label>
-            <b-form-input
-              v-model="form.title"
-              :state="errors.length > 0 ? false : null"
-              placeholder="Nhập tiêu đề"
-            />
-            <small class="text-danger">{{
-              errors[0] && 'Vui lòng nhập tiêu đề'
-            }}</small>
-          </b-form-group>
-        </validation-provider>
-        <validation-provider #default="{ errors }" name="Loại" rules="required">
-          <b-form-group>
-            <label>Loại chi tiết nội dung công tác</label>
-            <v-select
-              v-model="form.type"
+              v-model="form.year"
               :state="errors.length > 0 ? false : null"
               :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
               label="name"
-              :reduce="(type) => type.id"
-              :options="optionTypes"
+              :reduce="(year) => year._id"
+              placeholder="Chọn năm học"
+              :options="optionYears"
             />
             <small class="text-danger">{{
-              errors[0] && 'Vui lòng loại nội dung'
+              errors[0] && 'Vui lòng chọn năm học'
+            }}</small>
+          </b-form-group>
+        </validation-provider>
+        <validation-provider #default="{ errors }" name="Tên" rules="required">
+          <b-form-group>
+            <label>Tên học kỳ</label>
+            <b-form-input
+              v-model="form.name"
+              :state="errors.length > 0 ? false : null"
+              placeholder="Nhập tên học kỳ"
+            />
+            <small class="text-danger">{{
+              errors[0] && 'Vui lòng nhập tên học kỳ'
             }}</small>
           </b-form-group>
         </validation-provider>
         <validation-provider
           #default="{ errors }"
-          name="Định mức"
+          name="Ngày bắt đầu"
           rules="required"
         >
           <b-form-group>
-            <label>Định mức theo quy định</label>
-            <b-form-input
-              v-model="form.quota"
+            <label>Ngày bắt đầu</label>
+            <b-form-datepicker
+              v-model="form.startDate"
+              :min="form.endDate"
+              locale="vi"
               :state="errors.length > 0 ? false : null"
-              placeholder="Nhập định mức theo quy định"
             />
             <small class="text-danger">{{
-              errors[0] && 'Vui lòng nhập định mức theo quy định'
+              errors[0] && 'Vui lòng chọn ngày bắt đầu'
             }}</small>
           </b-form-group>
         </validation-provider>
+        <b-form-group>
+          <label>Ngày kết thúc</label>
+          <b-form-datepicker
+            v-model="form.endDate"
+            locale="vi"
+            :min="form.startDate"
+          />
+        </b-form-group>
         <b-form-group>
           <label>Mô tả</label>
           <b-form-textarea
@@ -95,7 +85,7 @@
             class="d-inline-block"
           >
             <b-button variant="primary" type="submit" @click="validationForm">
-              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} chi tiết nội dung
+              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} học kỳ
             </b-button>
           </b-overlay>
           <b-button class="ml-1" variant="outline-primary" @click="onClose()">
@@ -116,6 +106,7 @@ import {
   BButton,
   BOverlay,
   BFormTextarea,
+  BFormDatepicker,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -123,7 +114,8 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
 import vSelect from 'vue-select'
 import activityServices from '@/services/actitvity'
-import contentServices from '@/services/content'
+import yearServices from '@/services/year'
+import semesterServices from '@/services/semester'
 
 export default {
   components: {
@@ -136,6 +128,7 @@ export default {
     BOverlay,
     ValidationProvider,
     ValidationObserver,
+    BFormDatepicker,
     vSelect,
   },
   directives: {
@@ -157,29 +150,15 @@ export default {
   data() {
     return {
       form: {
-        title: '',
+        name: '',
+        year: '',
+        startDate: '',
+        endDate: '',
         description: '',
-        quota: '',
-        content: '',
-        type: '',
       },
+      optionYears: [],
       isBusy: false,
       required,
-      optionContents: [],
-      optionTypes: [
-        {
-          id: 'STAFF',
-          name: 'Tự điểm danh',
-        },
-        {
-          id: 'MINISTRY',
-          name: 'Giáo vụ điểm danh',
-        },
-        {
-          id: 'MONITOR_EXAM',
-          name: 'Canh thi',
-        },
-      ],
     }
   },
   computed: {
@@ -192,7 +171,7 @@ export default {
       if (this.dataEdit) {
         this.form = { ...this.dataEdit }
       } else this.onClearForm()
-      this.getContents()
+      this.getYears()
     },
   },
   methods: {
@@ -201,11 +180,11 @@ export default {
     },
     onClearForm() {
       this.form = {
-        title: '',
+        name: '',
+        year: '',
+        startDate: '',
+        endDate: '',
         description: '',
-        quota: '',
-        content: '',
-        type: '',
       }
     },
     validationForm() {
@@ -218,13 +197,13 @@ export default {
       try {
         let res
         if (this.dataEdit) {
-          res = await activityServices.updateActivities({
+          res = await semesterServices.update({
             // eslint-disable-next-line no-underscore-dangle
             id: this.dataEdit._id,
             ...this.form,
           })
         } else {
-          res = await activityServices.createActivities(this.form)
+          res = await semesterServices.create(this.form)
         }
         this.$toast({
           component: ToastificationContent,
@@ -252,11 +231,11 @@ export default {
         this.isBusy = false
       }
     },
-    async getContents() {
+    async getYears() {
       this.isBusy = true
       try {
-        const res = await contentServices.getContens()
-        this.optionContents = res.data.data.contents
+        const res = await yearServices.getYears()
+        this.optionYears = res.data.data.years
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
