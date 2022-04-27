@@ -16,7 +16,7 @@
         block
         @click="$emit('update:isEventHandlerSidebarActive', true)"
       >
-        Thêm lịch
+        Thêm công việc
       </b-button>
       <div class="mt-3">
         <h5 class="app-label section-label mb-1">
@@ -60,7 +60,6 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
-import userServices from '@/services/user'
 import useCalendarSidebar from './useCalendarSidebar'
 
 export default {

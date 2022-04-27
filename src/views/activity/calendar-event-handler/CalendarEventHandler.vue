@@ -17,7 +17,7 @@
           class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
         >
           <h5 class="mb-0">
-            {{ eventLocal.id ? 'Cập nhật' : 'Thêm' }} hoạt động
+            {{ eventLocal.id ? 'Cập nhật' : 'Thêm' }} công việc
           </h5>
           <div>
             <feather-icon
@@ -190,91 +190,6 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-
-            <!-- All Day -->
-            <!-- <b-form-group>
-              <b-form-checkbox
-                v-model="eventLocal.allDay"
-                name="check-button"
-                switch
-                inline
-              >
-                All Day
-              </b-form-checkbox>
-            </b-form-group> -->
-
-            <!-- Event URL -->
-            <!-- <validation-provider
-              #default="validationContext"
-              name="Event URL"
-              rules="url"
-            >
-              <b-form-group
-                label="Event URL"
-                label-for="event-url"
-              >
-                <b-form-input
-                  id="event-url"
-                  v-model="eventLocal.eventUrl"
-                  type="url"
-                  :state="getValidationState(validationContext)"
-                  placeholder="htttps://www.google.com"
-                  trim
-                />
-                <b-form-invalid-feedback
-                  :state="getValidationState(validationContext)"
-                >
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </validation-provider> -->
-
-            <!-- Guests -->
-            <!-- <b-form-group
-              label="Add Guests"
-              label-for="add-guests"
-            >
-              <v-select
-                v-model="eventLocal.extendedProps.guests"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                multiple
-                :close-on-select="false"
-                :options="guestsOptions"
-                label="name"
-                input-id="add-guests"
-              >
-
-                <template #option="{ avatar, name }">
-                  <b-avatar
-                    size="sm"
-                    :src="avatar"
-                  />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
-                </template>
-
-                <template #selected-option="{ avatar, name }">
-                  <b-avatar
-                    size="sm"
-                    class="border border-white"
-                    :src="avatar"
-                  />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
-                </template>
-              </v-select>
-            </b-form-group> -->
-            <!-- <b-form-group
-              label="Location"
-              label-for="event-location"
-            >
-              <b-form-input
-                id="event-location"
-                v-model="eventLocal.extendedProps.location"
-                trim
-                placeholder="Event Location"
-              />
-            </b-form-group> -->
-
-            <!-- Textarea -->
             <b-form-group
               label="Mô tả"
               label-for="event-description"
