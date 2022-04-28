@@ -182,20 +182,20 @@ $vs-dropdown-box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.1);
 }
 
 // Tag styling
-// .v-select:not(.vs--single) {
-//   .vs__selected-options {
-//     .vs__selected {
-//       background-color: $primary;
-//       border: none;
-//       color: #fff;
-//       button {
-//         svg {
-//           fill: white;
-//         }
-//       }
-//     }
-//   }
-// }
+.v-select:not(.vs--single) {
+  .vs__selected-options {
+    .vs__selected {
+      background-color: $primary;
+      border: none;
+      color: #fff;
+      button {
+        svg {
+          fill: white;
+        }
+      }
+    }
+  }
+}
 
 // ------------------------------------------------
 // Size: Large

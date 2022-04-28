@@ -9,12 +9,19 @@
       backdrop
       no-header
       right
-      @change="val => $emit('update:is-event-handler-sidebar-active', val)"
+      @change="(val) => $emit('update:is-event-handler-sidebar-active', val)"
     >
       <template #default="{ hide }">
         <!-- Header -->
         <div
-          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+          class="
+            d-flex
+            justify-content-between
+            align-items-center
+            content-sidebar-header
+            px-2
+            py-1
+          "
         >
           <h5 class="mb-0">
             {{ eventLocal.id ? 'Cập nhật' : 'Thêm' }} công việc
@@ -42,71 +49,37 @@
         </div>
 
         <!-- Body -->
-        <validation-observer
-          #default="{ handleSubmit }"
-          ref="refFormObserver"
-        >
+        <validation-observer #default="{ handleSubmit }" ref="refFormObserver">
           <!-- Form -->
           <b-form
             class="p-2"
             @submit.prevent="handleSubmit(onSubmit)"
             @reset.prevent="resetForm"
           >
-            <!-- Title -->
+            <!-- Semester -->
             <validation-provider
               #default="validationContext"
-              name="Title"
+              name="Semester"
               rules="required"
             >
               <b-form-group
-                label="Nội dung"
-                label-for="event-title"
-              >
-                <b-form-input
-                  id="event-title"
-                  v-model="eventLocal.title"
-                  autofocus
-                  :state="getValidationState(validationContext)"
-                  trim
-                  placeholder="Event Title"
-                />
-
-                <b-form-invalid-feedback>
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </validation-provider>
-            <!-- Type -->
-            <validation-provider
-              #default="validationContext"
-              name="Calendar"
-              rules="required"
-            >
-              <b-form-group
-                label="Chọn hoạt động"
-                label-for="calendar"
+                label="Học kỳ"
+                label-for="Semester"
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-
-                  input-id="id"
+                  v-model="eventLocal.extendedProps.semester"
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  :options="semesterOptions"
+                  label="name"
+                  :reduce="(semester) => semester._id"
+                  input-id="_id"
                 >
-                  <template #option="{ color, label }">
-                    <div
-                      class="rounded-circle d-inline-block mr-50"
-                      :class="`bg-${color}`"
-                      style="height: 10px; width: 10px"
-                    />
-                    <span> {{ label }}</span>
+                  <template #option="{ name, year }">
+                    <span>{{ name }} - {{ year.name }}</span>
                   </template>
-
-                  <template #selected-option="{ color, label }">
-                    <div
-                      class="rounded-circle d-inline-block mr-50"
-                      :class="`bg-${color}`"
-                      style="height: 10px; width: 10px"
-                    />
-                    <span> {{ label }}</span>
+                  <template #selected-option="{ name, year }">
+                    <span>{{ name }} - {{ year.name }}</span>
                   </template>
                 </v-select>
 
@@ -117,25 +90,26 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-            <!-- Calendar -->
-            <!-- <validation-provider
+            <!-- Activity -->
+            <validation-provider
               #default="validationContext"
-              name="Year"
+              name="Activity"
               rules="required"
             >
               <b-form-group
-                label="Năm học"
-                label-for="Year"
+                label="Hoạt động"
+                label-for="Activity"
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-                  v-model="eventLocal.extendedProps.year"
+                  v-model="eventLocal.extendedProps.activity"
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="yearOptions"
-                  label="name"
-                  :reduce="year => year._id"
+                  :options="activityOptions"
+                  label="title"
+                  :reduce="(activity) => activity._id"
                   input-id="_id"
-                />
+                >
+                </v-select>
 
                 <b-form-invalid-feedback
                   :state="getValidationState(validationContext)"
@@ -143,7 +117,32 @@
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider> -->
+            </validation-provider>
+            <div v-if="quotaStr" class="mb-1">
+              <label>Thông tin hoạt động</label>
+              <p>Định mức: {{ quotaStr }}</p>
+            </div>
+            <!-- Title -->
+            <validation-provider
+              #default="validationContext"
+              name="title"
+              rules="required"
+            >
+              <b-form-group label="Mô tả" label-for="event-title">
+                <b-form-textarea
+                  id="event-title"
+                  v-model="eventLocal.title"
+                  autofocus
+                  :state="getValidationState(validationContext)"
+                  trim
+                  placeholder="Nhập mô tả"
+                />
+
+                <b-form-invalid-feedback>
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
             <!-- Start Date -->
             <validation-provider
               #default="validationContext"
@@ -156,6 +155,7 @@
                 :state="getValidationState(validationContext)"
               >
                 <flat-pickr
+                  :maxDate="eventLocal.end"
                   v-model="eventLocal.start"
                   class="form-control"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
@@ -169,16 +169,14 @@
             </validation-provider>
 
             <!-- End Date -->
-            <validation-provider
-              #default="validationContext"
-              name="End Date"
-            >
+            <validation-provider #default="validationContext" name="End Date">
               <b-form-group
                 label="Ngày kết thúc"
                 label-for="end-date"
                 :state="getValidationState(validationContext)"
               >
                 <flat-pickr
+                  :minDate="eventLocal.start"
                   v-model="eventLocal.end"
                   class="form-control"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
@@ -190,16 +188,79 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-            <b-form-group
-              label="Mô tả"
-              label-for="event-description"
-            >
-              <b-form-textarea
-                id="event-description"
-                v-model="eventLocal.extendedProps.description"
-              />
-            </b-form-group>
 
+            <validation-provider
+              #default="validationContext"
+              name="officeHours"
+              rules="required"
+            >
+              <b-form-group
+                label="Số giờ định mức đạt được"
+                label-for="event-title"
+              >
+                <b-form-input
+                  type="number"
+                  v-model="eventLocal.extendedProps.officeHours"
+                  autofocus
+                  :state="getValidationState(validationContext)"
+                  trim
+                  placeholder="Nhập số giờ đạt cho mỗi người được khi hoàn thành công việc này"
+                />
+
+                <b-form-invalid-feedback>
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
+            <!-- Participants -->
+            <validation-provider
+              #default="validationContext"
+              name="Participants"
+              rules="required"
+            >
+              <b-form-group
+                label="Người tham gia"
+                label-for="Participants"
+                :state="getValidationState(validationContext)"
+              >
+                <v-select
+                  multiple
+                  v-model="eventLocal.extendedProps.participants"
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  :options="participantsOptions"
+                  label="name"
+                  :reduce="(user) => user._id"
+                  input-id="_id"
+                >
+                  <template #option="{ name, userId, avatar }">
+                    <div class="d-flex align-items-center">
+                      <b-avatar
+                        :src="avatar"
+                        size="1.3rem"
+                        class="mr-1"
+                      ></b-avatar>
+                      <span>{{ userId }} - {{ name }}</span>
+                    </div>
+                  </template>
+                  <template #selected-option="{ name, userId, avatar }">
+                    <div class="d-flex align-items-center">
+                      <b-avatar
+                        :src="avatar"
+                        size="1.3rem"
+                        class="mr-1"
+                      ></b-avatar>
+                      <span>{{ userId }} - {{ name }}</span>
+                    </div>
+                  </template>
+                </v-select>
+
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
             <!-- Form Actions -->
             <div class="d-flex mt-2">
               <b-button
@@ -240,17 +301,26 @@ import {
   BFormTextarea,
   BButton,
   BFormInvalidFeedback,
+  BAvatar,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
+import { Vietnamese } from 'flatpickr/dist/l10n/vn.js'
+
 import Ripple from 'vue-ripple-directive'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, email, url } from '@validations'
 import formValidation from '@core/comp-functions/forms/form-validation'
 import { ref, toRefs } from '@vue/composition-api'
-import yearServices from '@/services/year'
 import useCalendarEventHandler from './useCalendarEventHandler'
 import DetailModal from '../detail-modal/DetailModal.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import semesterServices from '@/services/semester'
+import activityServices from '@/services/actitvity'
+import userServices from '@/services/user'
+
+// default locale is now Vietnamese
+flatpickr.localize(Vietnamese)
 
 export default {
   components: {
@@ -260,6 +330,7 @@ export default {
     BFormGroup,
     BFormInput,
     BFormTextarea,
+    BAvatar,
     vSelect,
     flatPickr,
     ValidationProvider,
@@ -293,17 +364,29 @@ export default {
       required,
       email,
       url,
-      yearOptions: [],
+      semesterOptions: [],
+      activityOptions: [],
+      participantsOptions: [],
       isVisibleModalAdd: false,
     }
   },
-  async created() {
-    try {
-      const res = await yearServices.getYears()
-      this.yearOptions = res.data.data.years
-    } catch (err) {
-      console.log(err.response)
-    }
+  created() {
+    this.getSemester()
+    this.getActivities()
+    this.getStaff()
+  },
+  computed: {
+    quotaStr() {
+      if (
+        this.eventLocal.extendedProps.activity &&
+        this.activityOptions.length > 0
+      ) {
+        return this.activityOptions.find(
+          (activity) => activity._id === this.eventLocal.extendedProps.activity
+        ).quota
+      }
+      return false
+    },
   },
   methods: {
     openModalAdd() {
@@ -312,7 +395,65 @@ export default {
     closeModalAdd() {
       this.isVisibleModalAdd = false
     },
+    // get semester
+    async getSemester(year) {
+      try {
+        const res = await semesterServices.getAll({ year })
+        this.semesterOptions = res.data.data.semesters
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
+      }
+    },
+    // get semester
+    async getActivities(content) {
+      try {
+        const res = await activityServices.getActivities({ content })
+        this.activityOptions = res.data.data.activities
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
+      }
+    },
+    // set staff
+    async getStaff() {
+      try {
+        const res = await userServices.getUsers({ role: 'STAFF' })
+        this.participantsOptions = res.data.data.users
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
+      }
+    },
   },
+  //
   setup(props, { emit }) {
     /*
      ? This is handled quite differently in SFC due to deadlock of `useFormValidation` and this composition function.
@@ -339,9 +480,8 @@ export default {
       guestsOptions,
     } = useCalendarEventHandler(toRefs(props), clearFormData, emit)
 
-    const {
-      refFormObserver, getValidationState, resetForm, clearForm,
-    } = formValidation(resetEventLocal, props.clearEventData)
+    const { refFormObserver, getValidationState, resetForm, clearForm } =
+      formValidation(resetEventLocal, props.clearEventData)
 
     clearFormData.value = clearForm
 

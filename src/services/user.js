@@ -1,7 +1,10 @@
 import axiosIns from '@/libs/axios'
 
+const baseUrl = '/user'
+
 const userServices = {
-  getUsers: () => axiosIns.get('/user'),
-  addUser: user => axiosIns.post('/user', user),
+  getUsers: ({ role }) =>
+    axiosIns.get(`${baseUrl}?${role ? `role=${role}` : ''}`),
+  addUser: (user) => axiosIns.post(`${baseUrl}`, user),
 }
 export default userServices
