@@ -42,7 +42,7 @@
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="primary"
           class=""
-          @click="handleAddAssignee()"
+          @click="createParticipant()"
         >
           Thêm người thực hiện
         </b-button>
@@ -53,55 +53,85 @@
       :fields="fields"
       striped
       responsive
+      bordered
+      show-empty
+      :busy="isBusy"
     >
-      <template #cell(show_details)="row">
-        <b-form-checkbox
-          v-model="row.detailsShowing"
-          plain
-          class="vs-checkbox-con"
-          @change="row.toggleDetails"
-        >
-          <span class="vs-checkbox">
-            <span class="vs-checkbox--check">
-              <i class="vs-icon feather icon-check" />
-            </span>
-          </span>
-          <span class="vs-label">{{ row.detailsShowing ? 'Ẩn' : 'Hiện' }}</span>
-        </b-form-checkbox>
+      <!-- A virtual column -->
+      <template #cell(index)="data">
+        {{ data.index + 1 }}
       </template>
-      <template #row-details="row">
-        <b-card>
-          <b-row class="mb-2">
-            <b-col
-              md="4"
-              class="mb-1"
-            >
-              <strong>Nội dung : </strong>{{ row.item.description }}
-            </b-col>
-          </b-row>
-
-          <b-button
-            size="sm"
-            variant="outline-secondary"
-            @click="row.toggleDetails"
+      <template #cell(user)="data">
+        {{ data.value.name }}
+      </template>
+      <template #cell(imageBase64)="data">
+        <viewer>
+          <img
+            :src="data.value"
+            width="70px"
+            style="cursor: pointer; border-radius: 3px"
           >
-            Ẩn chi tiết
-          </b-button>
-        </b-card>
-      </template>
-      <template #cell(fullname)="row">
-        <span>{{ row.item.assignee.name }}</span>
-      </template>
-      <template #cell(quota)="data">
-        <span>{{ data.value }} giờ</span>
-      </template>
-      <template #cell(avatar)="data">
-        <b-avatar :src="data.value" />
+        </viewer>
       </template>
       <template #cell(status)="data">
-        <b-badge :variant="status[1][data.value]">
-          {{ status[0][data.value] }}
+        <b-badge
+          v-if="data.value === 'notAnswered'"
+          variant="info"
+        >
+          Chưa trả lời
         </b-badge>
+        <b-badge
+          v-if="data.value === 'accept'"
+          variant="primary"
+        >
+          Chấp nhận
+        </b-badge>
+        <b-badge
+          v-if="data.value === 'refuse'"
+          variant="danger"
+        >
+          Từ chối
+        </b-badge>
+        <b-badge
+          v-if="data.value === 'incomplete'"
+          variant="dark"
+        >
+          Không hoàn thành
+        </b-badge>
+        <b-badge
+          v-if="data.value === 'done'"
+          variant="success"
+        >
+          Hoàn thành
+        </b-badge>
+      </template>
+      <template #cell(isApprove)="data">
+        <b-form-checkbox
+          v-if="infoActivity.type === 'MINISTRY'"
+          :checked="data.value"
+          class="custom-control-success"
+          name="check-button"
+          switch
+          inline
+          @change="handleChangeStatus(data.item._id)"
+        />
+      </template>
+      <template #cell(action)="data">
+        <div class="d-flex">
+          <b-button
+            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+            variant="gradient-danger"
+            class="btn-icon rounded-circle ml-1"
+            @click="deleteParticipant(data.item._id)"
+          >
+            <feather-icon icon="Trash2Icon" />
+          </b-button>
+        </div>
+      </template>
+      <template #table-busy>
+        <div class="text-center text-primary my-2">
+          <b-spinner class="align-middle" />
+        </div>
       </template>
     </b-table>
   </b-modal>
@@ -111,35 +141,35 @@ import {
   BModal,
   VBTooltip,
   BTable,
-  BFormCheckbox,
   BButton,
-  BCard,
   BRow,
   BCol,
   BAvatar,
-  BBadge,
   VBModal,
   BFormGroup,
+  BBadge,
+  BFormCheckbox,
+  BSpinner,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import userServices from '@/services/user'
-import activityServices from '@/services/actitvity'
+import participantServices from '@/services/participant'
 
 export default {
   components: {
     BModal,
     BTable,
-    BFormCheckbox,
     BButton,
-    BCard,
     BRow,
     BCol,
     BAvatar,
-    BBadge,
     vSelect,
     BFormGroup,
+    BBadge,
+    BFormCheckbox,
+    BSpinner,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -155,17 +185,24 @@ export default {
       type: String,
       default: '',
     },
+    infoActivity: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data() {
     return {
       selected: '',
       optionUser: [],
       fields: [
-        { key: 'show_details', label: 'Hiển thị chi tiết' },
-        { key: 'avatar', label: 'Avatar' },
-        { key: 'fullname', label: 'Họ tên' },
-        { key: 'quota', label: 'Định mức' },
+        { key: 'index', label: 'STT' },
+        { key: 'user', label: 'Họ tên' },
         { key: 'status', label: 'Trạng thái' },
+        { key: 'imageBase64', label: 'Minh chứng' },
+        { key: 'isApprove', label: 'Xác nhận' },
+        { key: 'action', label: 'Hành động' },
       ],
       items: [],
       status: [
@@ -184,68 +221,175 @@ export default {
           notEngaged: 'light-info',
         },
       ],
+      isBusy: true,
+      empty: {
+        text: 'Không có dữ liệu',
+        status: 'text-primary',
+      },
     }
   },
-  created() {
-    this.getAllUser()
-    this.getListActivityDetailByID()
+  watch: {
+    isVisible() {
+      if (this.isVisible === true) {
+        this.getAllUser()
+        this.getParticipantsByTask()
+      }
+    },
   },
   methods: {
     onClose() {
       this.$emit('close-modal-add')
     },
+    async handleChangeStatus(id) {
+      this.isBusy = true
+      try {
+        const res = await participantServices.updateApprove({
+          id,
+        })
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: res.data.message,
+            variant: 'success',
+          },
+        })
+        this.getParticipantsByTask()
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response?.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
+      }
+    },
     async getAllUser() {
+      this.isBusy = true
       try {
-        const res = await userServices.getUsers()
-        this.optionUser = res.data.data
+        const res = await userServices.getUsers({ role: 'STAFF' })
+        this.optionUser = res.data.data.users
       } catch (error) {
         this.$toast({
           component: ToastificationContent,
           props: {
-            title: 'Notification',
+            title: 'Thông báo',
             icon: 'BellIcon',
-            text: error.response,
+            text: error.response?.message
+              ? error.response.message
+              : error.toString(),
             variant: 'warning',
           },
         })
+      }
+      this.isBusy = false
+    },
+    async getParticipantsByTask() {
+      this.isBusy = false
+      try {
+        const res = await participantServices.getParticipants({
+          task: this.idEvent,
+        })
+        this.items = res.data.data.participants
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.message
+              ? error.response.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
       }
     },
-    async getListActivityDetailByID() {
+    async createParticipant() {
+      this.isBusy = true
       try {
-        const res = await activityServices.getListActivityDetailByID(
-          this.idEvent,
-        )
-        this.items = res.data.data.activityDetails
+        const res = await participantServices.createParticipant({
+          task: this.idEvent,
+          user: this.selected,
+        })
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: res.data.message,
+            variant: 'success',
+          },
+        })
+        this.getParticipantsByTask()
       } catch (error) {
         this.$toast({
           component: ToastificationContent,
           props: {
-            title: 'Notification',
+            title: 'Thông báo',
             icon: 'BellIcon',
-            text: error.response,
+            text: error.response?.data.message
+              ? error.response?.data.message
+              : error.toString(),
             variant: 'warning',
           },
         })
+      } finally {
+        this.isBusy = false
       }
     },
-    async handleAddAssignee() {
-      try {
-        await activityServices.addAssignee({
-          activity: this.idEvent,
-          assignee: this.selected,
-        })
-        this.getListActivityDetailByID()
-      } catch (error) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Notification',
-            icon: 'BellIcon',
-            text: error.response.data.message,
-            variant: 'warning',
-          },
-        })
-      }
+    async deleteParticipant(id) {
+      this.$swal({
+        title: 'Bạn chắc chứ?',
+        text: 'Bạn sẽ không thể hoàn tác hành động này!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Vâng, tôi sẽ xoá nó!',
+        cancelButtonText: 'Đóng',
+        customClass: {
+          confirmButton: 'btn btn-outline-danger',
+          cancelButton: 'btn btn-primary ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          participantServices
+            .deleteAParticipant({ id })
+            .then(res => {
+              this.$swal({
+                icon: 'success',
+                title: 'Đã xoá!',
+                text: res.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
+            })
+            .catch(err => {
+              this.$swal({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: err.response.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
+            })
+            .finally(() => {
+              this.getParticipantsByTask()
+            })
+        }
+      })
     },
   },
 }

@@ -9,19 +9,12 @@
       backdrop
       no-header
       right
-      @change="(val) => $emit('update:is-event-handler-sidebar-active', val)"
+      @change="val => $emit('update:is-event-handler-sidebar-active', val)"
     >
       <template #default="{ hide }">
         <!-- Header -->
         <div
-          class="
-            d-flex
-            justify-content-between
-            align-items-center
-            content-sidebar-header
-            px-2
-            py-1
-          "
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
         >
           <h5 class="mb-0">
             {{ eventLocal.id ? 'Cập nhật' : 'Thêm' }} công việc
@@ -49,7 +42,10 @@
         </div>
 
         <!-- Body -->
-        <validation-observer #default="{ handleSubmit }" ref="refFormObserver">
+        <validation-observer
+          #default="{ handleSubmit }"
+          ref="refFormObserver"
+        >
           <!-- Form -->
           <b-form
             class="p-2"
@@ -72,7 +68,7 @@
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="semesterOptions"
                   label="name"
-                  :reduce="(semester) => semester._id"
+                  :reduce="semester => semester._id"
                   input-id="_id"
                 >
                   <template #option="{ name, year }">
@@ -106,10 +102,9 @@
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="activityOptions"
                   label="title"
-                  :reduce="(activity) => activity._id"
+                  :reduce="activity => activity._id"
                   input-id="_id"
-                >
-                </v-select>
+                />
 
                 <b-form-invalid-feedback
                   :state="getValidationState(validationContext)"
@@ -118,9 +113,27 @@
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
-            <div v-if="quotaStr" class="mb-1">
+            <div
+              v-if="infoActivity"
+              class="mb-1"
+            >
               <label>Thông tin hoạt động</label>
-              <p>Định mức: {{ quotaStr }}</p>
+              <p>Định mức: {{ infoActivity.quota }}</p>
+              <p>
+                Loại hoạt động:
+                <span
+                  v-if="infoActivity.type === 'STAFF'"
+                  class="text-success"
+                >Tự điểm danh</span>
+                <span
+                  v-if="infoActivity.type === 'MINISTRY'"
+                  class="text-warning"
+                >Giáo vụ điểm danh</span>
+                <span
+                  v-if="infoActivity.type === 'MONITOR_EXAM'"
+                  class="text-info"
+                >Canh thi</span>
+              </p>
             </div>
             <!-- Title -->
             <validation-provider
@@ -128,7 +141,10 @@
               name="title"
               rules="required"
             >
-              <b-form-group label="Mô tả" label-for="event-title">
+              <b-form-group
+                label="Mô tả"
+                label-for="event-title"
+              >
                 <b-form-textarea
                   id="event-title"
                   v-model="eventLocal.title"
@@ -150,13 +166,13 @@
               rules="required"
             >
               <b-form-group
-                label="Ngày bắt đầu"
+                label="Thời gian bắt đầu"
                 label-for="start-date"
                 :state="getValidationState(validationContext)"
               >
                 <flat-pickr
-                  :maxDate="eventLocal.end"
                   v-model="eventLocal.start"
+                  :max-date="eventLocal.end"
                   class="form-control"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
@@ -169,15 +185,19 @@
             </validation-provider>
 
             <!-- End Date -->
-            <validation-provider #default="validationContext" name="End Date">
+            <validation-provider
+              #default="validationContext"
+              name="End Date"
+              rules="required"
+            >
               <b-form-group
-                label="Ngày kết thúc"
+                label="Thời gian kết thúc"
                 label-for="end-date"
                 :state="getValidationState(validationContext)"
               >
                 <flat-pickr
-                  :minDate="eventLocal.start"
                   v-model="eventLocal.end"
+                  :min-date="eventLocal.start"
                   class="form-control"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
@@ -199,12 +219,12 @@
                 label-for="event-title"
               >
                 <b-form-input
-                  type="number"
                   v-model="eventLocal.extendedProps.officeHours"
+                  type="number"
                   autofocus
                   :state="getValidationState(validationContext)"
                   trim
-                  placeholder="Nhập số giờ đạt cho mỗi người được khi hoàn thành công việc này"
+                  placeholder="Nhập số giờ đạt cho mỗi người được khi hoàn thành xong"
                 />
 
                 <b-form-invalid-feedback>
@@ -214,6 +234,7 @@
             </validation-provider>
             <!-- Participants -->
             <validation-provider
+              v-if="!eventLocal.id"
               #default="validationContext"
               name="Participants"
               rules="required"
@@ -224,12 +245,12 @@
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-                  multiple
                   v-model="eventLocal.extendedProps.participants"
+                  multiple
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="participantsOptions"
                   label="name"
-                  :reduce="(user) => user._id"
+                  :reduce="user => user._id"
                   input-id="_id"
                 >
                   <template #option="{ name, userId, avatar }">
@@ -238,7 +259,7 @@
                         :src="avatar"
                         size="1.3rem"
                         class="mr-1"
-                      ></b-avatar>
+                      />
                       <span>{{ userId }} - {{ name }}</span>
                     </div>
                   </template>
@@ -248,7 +269,7 @@
                         :src="avatar"
                         size="1.3rem"
                         class="mr-1"
-                      ></b-avatar>
+                      />
                       <span>{{ userId }} - {{ name }}</span>
                     </div>
                   </template>
@@ -287,6 +308,7 @@
       v-if="eventLocal.id"
       :is-visible="isVisibleModalAdd"
       :id-event="eventLocal.id"
+      :info-activity="infoActivity"
       @close-modal-add="closeModalAdd"
     />
   </div>
@@ -305,22 +327,17 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
-import { Vietnamese } from 'flatpickr/dist/l10n/vn.js'
-
 import Ripple from 'vue-ripple-directive'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, email, url } from '@validations'
 import formValidation from '@core/comp-functions/forms/form-validation'
 import { ref, toRefs } from '@vue/composition-api'
-import useCalendarEventHandler from './useCalendarEventHandler'
-import DetailModal from '../detail-modal/DetailModal.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import semesterServices from '@/services/semester'
 import activityServices from '@/services/actitvity'
 import userServices from '@/services/user'
-
-// default locale is now Vietnamese
-flatpickr.localize(Vietnamese)
+import DetailModal from '../detail-modal/DetailModal.vue'
+import useCalendarEventHandler from './useCalendarEventHandler'
 
 export default {
   components: {
@@ -370,23 +387,28 @@ export default {
       isVisibleModalAdd: false,
     }
   },
+  computed: {
+    infoActivity() {
+      if (
+        this.eventLocal.extendedProps.activity
+        && this.activityOptions.length > 0
+      ) {
+        const result = this.activityOptions.find(
+          // eslint-disable-next-line no-underscore-dangle
+          activity => activity._id === this.eventLocal.extendedProps.activity,
+        )
+        return {
+          type: result.type,
+          quota: result.quota,
+        }
+      }
+      return false
+    },
+  },
   created() {
     this.getSemester()
     this.getActivities()
     this.getStaff()
-  },
-  computed: {
-    quotaStr() {
-      if (
-        this.eventLocal.extendedProps.activity &&
-        this.activityOptions.length > 0
-      ) {
-        return this.activityOptions.find(
-          (activity) => activity._id === this.eventLocal.extendedProps.activity
-        ).quota
-      }
-      return false
-    },
   },
   methods: {
     openModalAdd() {
@@ -480,8 +502,9 @@ export default {
       guestsOptions,
     } = useCalendarEventHandler(toRefs(props), clearFormData, emit)
 
-    const { refFormObserver, getValidationState, resetForm, clearForm } =
-      formValidation(resetEventLocal, props.clearEventData)
+    const {
+      refFormObserver, getValidationState, resetForm, clearForm,
+    } = formValidation(resetEventLocal, props.clearEventData)
 
     clearFormData.value = clearForm
 

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import axios from '@axios'
+import axiosIns from '@/libs/axios'
+import moment from 'moment'
 
 export default {
   namespaced: true,
@@ -32,48 +33,51 @@ export default {
   actions: {
     fetchEvents(_ctx, { calendars, event }) {
       return new Promise((resolve, reject) => {
-        axios
+        axiosIns
           .get('/task')
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     addEvent(_ctx, { event }) {
       const body = {
-        year: event.extendedProps.year,
-        content: event.title,
-        description: event.extendedProps.description,
-        startDate: event.start,
-        endDate: event.end,
+        activity: event.extendedProps.activity,
+        description: event.title,
+        startDate: moment(event.start, 'YYYY/MM/DD HH:mm').toString(),
+        endDate: moment(event.end, 'YYYY/MM/DD HH:mm').toString(),
+        officeHours: event.extendedProps.officeHours,
+        listOfParticipants: event.extendedProps.participants,
+        semester: event.extendedProps.semester,
       }
       return new Promise((resolve, reject) => {
-        axios
-          .post('/activity', body)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+        axiosIns
+          .post('/task', body)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     updateEvent(_ctx, { event }) {
       const body = {
-        year: event.extendedProps.year,
-        content: event.title,
-        description: event.extendedProps.description,
-        startDate: event.start,
-        endDate: event.end,
+        activity: event.extendedProps.activity,
+        description: event.title,
+        startDate: moment(event.start, 'YYYY/MM/DD HH:mm').toString(),
+        endDate: moment(event.end, 'YYYY/MM/DD HH:mm').toString(),
+        officeHours: event.extendedProps.officeHours,
+        semester: event.extendedProps.semester,
       }
       return new Promise((resolve, reject) => {
-        axios
-          .put(`/activity/${event.id}`, body)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+        axiosIns
+          .put(`/task/${event.id}`, body)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
     removeEvent(_ctx, { id }) {
       return new Promise((resolve, reject) => {
-        axios
+        axiosIns
           .delete(`/activity/${id}`)
-          .then((response) => resolve(response))
-          .catch((error) => reject(error))
+          .then(response => resolve(response))
+          .catch(error => reject(error))
       })
     },
   },

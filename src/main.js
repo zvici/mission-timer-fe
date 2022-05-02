@@ -3,11 +3,13 @@ import OneSignalVue from 'onesignal-vue'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import VueSweetalert2 from 'vue-sweetalert2'
-
+import VueViewer from 'v-viewer'
 
 import router from './router'
 import store from './store'
 import App from './App.vue'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'viewerjs/dist/viewer.css'
 
 // Global Components
 import './global-components'
@@ -26,9 +28,17 @@ Vue.use(ModalPlugin)
 // SweetAlert
 Vue.use(VueSweetalert2)
 
-//OneSignalVue
+// OneSignalVue
 Vue.use(OneSignalVue)
 
+//
+Vue.use(VueViewer, {
+  defaultOptions: {
+    toolbar: false,
+    navbar: false,
+    title: false,
+  },
+})
 
 // Composition API
 Vue.use(VueCompositionAPI)
