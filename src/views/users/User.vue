@@ -32,7 +32,7 @@
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
           <b-form-input
-            v-model="searchQuery"
+            v-model="filter"
             placeholder="Tìm kiếm người dùng"
           />
         </b-input-group>
@@ -51,17 +51,18 @@
       </b-col>
     </b-row>
     <b-table
+      striped
       :fields="fields"
       :items="items"
-      responsive="sm"
+      responsive
       bordered
       show-empty
+      :per-page="perPage"
+      :current-page="currentPage"
       :busy="isBusy"
+      :filter="filter"
     >
       <!-- A virtual column -->
-      <template #cell(index)="data">
-        {{ data.index + 1 }}
-      </template>
       <template #cell(name)="data">
         <div class="d-flex align-items-center">
           <b-avatar
@@ -75,6 +76,9 @@
             <span>{{ data.item.email }}</span>
           </div>
         </div>
+      </template>
+      <template #cell(department)="data">
+        {{ data.value.name }}
       </template>
       <template #cell(role)="data">
         <b-badge
@@ -101,7 +105,7 @@
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="gradient-info"
           class="btn-icon rounded-circle"
-          @click="openModalAdd"
+          @click="openModalAdd(data.item)"
         >
           <feather-icon icon="EditIcon" />
         </b-button>
@@ -125,8 +129,29 @@
         </div>
       </template>
     </b-table>
+    <div class="d-flex justify-content-between align-items-center">
+      <b-form-group class="mb-0">
+        <label class="d-inline-block text-sm-left mr-50">Số dòng trên trang</label>
+        <b-form-select
+          id="perPageSelect"
+          v-model="perPage"
+          size="md"
+          :options="pageOptions"
+          class="w-50"
+        />
+      </b-form-group>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        align="center"
+        size="md"
+        class="my-0"
+      />
+    </div>
     <modal-add-user
       :is-visible="isVisibleModalAdd"
+      :data-edit="dataEdit"
       @close-modal-add="closeModalAdd"
       @reload-data="getAllUser"
     />
@@ -146,6 +171,8 @@ import {
   BCol,
   VBTooltip,
   BBadge,
+  BPagination,
+  BFormSelect,
   BAvatar,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
@@ -169,6 +196,8 @@ export default {
     BAvatar,
     vSelect,
     ModalAddUser,
+    BPagination,
+    BFormSelect,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -177,7 +206,6 @@ export default {
   data() {
     return {
       fields: [
-        { key: 'index', label: 'STT' },
         { key: 'userId', label: 'Mã người dùng' },
         { key: 'name', label: 'Tên người dùng' },
         { key: 'department', label: 'Khoa' },
@@ -212,6 +240,12 @@ export default {
         },
       ],
       selectedRole: '',
+      dataEdit: null,
+      perPage: 5,
+      pageOptions: [5, 10, 15],
+      totalRows: 1,
+      currentPage: 1,
+      filter: null,
     }
   },
   watch: {
@@ -228,6 +262,7 @@ export default {
       try {
         const res = await userServices.getUsers({ role })
         this.items = res.data.data.users
+        this.totalRows = this.items.length
       } catch (error) {
         this.$toast({
           component: ToastificationContent,
@@ -244,11 +279,30 @@ export default {
         this.isBusy = false
       }
     },
-    openModalAdd() {
+    openModalAdd(data) {
+      this.dataEdit = {
+        // eslint-disable-next-line no-underscore-dangle
+        _id: data._id,
+        userId: data.userId,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        role: data.role,
+        // eslint-disable-next-line no-underscore-dangle
+        department: data.department._id,
+        // eslint-disable-next-line no-underscore-dangle
+        subject: data.subject._id,
+      }
       this.isVisibleModalAdd = true
     },
     closeModalAdd() {
       this.isVisibleModalAdd = false
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     },
   },
 }
