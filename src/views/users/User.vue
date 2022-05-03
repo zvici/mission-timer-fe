@@ -1,25 +1,52 @@
 <template>
   <b-card title="Quản lý người dùng">
     <b-row class="mb-1">
-      <b-col cols="12" md="6">
+      <b-col
+        cols="12"
+        md="3"
+      >
+        <div class="">
+          <v-select
+            v-model="selectedRole"
+            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+            label="name"
+            :reduce="role => role.id"
+            :options="optionRoles"
+            placeholder="Lọc theo: Tất cả"
+          >
+            <template #option="{ name }">
+              <span>Lọc theo: {{ name }}</span>
+            </template>
+            <template #selected-option="{ name }">
+              <span>Lọc theo: {{ name }}</span>
+            </template>
+          </v-select>
+        </div>
+      </b-col>
+      <b-col
+        cols="12"
+        md="5"
+      >
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
-          <b-form-input placeholder="Tìm kiếm nhân viên" />
+          <b-form-input
+            v-model="searchQuery"
+            placeholder="Tìm kiếm người dùng"
+          />
         </b-input-group>
       </b-col>
-      <b-col class="d-flex justify-content-end" cols="12" md="6">
-        <b-button variant="outline-primary" @click="openModalAdd">
-          <feather-icon icon="UserPlusIcon" /> Thêm người dùng
-        </b-button>
+      <b-col
+        class="d-flex justify-content-end"
+        cols="12"
+        md="4"
+      >
         <b-button
-          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-          v-b-tooltip.hover.top.v-success="'Thêm người dùng bằng file Excel'"
-          class="btn-icon ml-1"
-          variant="gradient-success"
+          variant="primary"
+          @click="openModalAdd(null)"
         >
-          <feather-icon icon="FilePlusIcon" />
+          <feather-icon icon="PlusIcon" /> Thêm người dùng
         </b-button>
       </b-col>
     </b-row>
@@ -37,7 +64,10 @@
       </template>
       <template #cell(name)="data">
         <div class="d-flex align-items-center">
-          <b-avatar size="lg" :src="data.item.avatar" />
+          <b-avatar
+            size="lg"
+            :src="data.item.avatar"
+          />
           <div class="pl-2 d-flex flex-column">
             <span class="">
               {{ data.item.name }}
@@ -47,13 +77,22 @@
         </div>
       </template>
       <template #cell(role)="data">
-        <b-badge v-if="data.value === 'ADMIN'" variant="light-dark">
+        <b-badge
+          v-if="data.value === 'ADMIN'"
+          variant="light-dark"
+        >
           Admin
         </b-badge>
-        <b-badge v-if="data.value === 'ACADEMIC_STAFF'" variant="light-info">
+        <b-badge
+          v-if="data.value === 'MINISTRY'"
+          variant="light-info"
+        >
           Giáo vụ
         </b-badge>
-        <b-badge v-if="data.value === 'STAFF'" variant="light-primary">
+        <b-badge
+          v-if="data.value === 'STAFF'"
+          variant="light-primary"
+        >
           Nhân viên
         </b-badge>
       </template>
@@ -110,6 +149,8 @@ import {
   BAvatar,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import vSelect from 'vue-select'
 import userServices from '@/services/user'
 import ModalAddUser from './ModalAddUser.vue'
 
@@ -126,6 +167,7 @@ export default {
     BCol,
     BBadge,
     BAvatar,
+    vSelect,
     ModalAddUser,
   },
   directives: {
@@ -150,22 +192,54 @@ export default {
         status: 'text-primary',
       },
       isVisibleModalAdd: false,
+      searchQuery: '',
+      optionRoles: [
+        {
+          id: '',
+          name: 'Tất cả',
+        },
+        {
+          id: 'STAFF',
+          name: 'Giảng viên',
+        },
+        {
+          id: 'MINISTRY',
+          name: 'Giáo vụ',
+        },
+        {
+          id: 'ADMIN',
+          name: 'Quản trị',
+        },
+      ],
+      selectedRole: '',
     }
+  },
+  watch: {
+    selectedRole() {
+      this.getAllUser(this.selectedRole)
+    },
   },
   created() {
     this.getAllUser()
   },
   methods: {
-    async getAllUser() {
+    async getAllUser(role) {
       this.isBusy = true
       try {
-        const res = await userServices.getUsers()
-        this.items = res.data.data
+        const res = await userServices.getUsers({ role })
+        this.items = res.data.data.users
       } catch (error) {
-        window.open(
-          `https://stackoverflow.com/search?q=${error.toString()}`,
-          '_blank'
-        )
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
       } finally {
         this.isBusy = false
       }

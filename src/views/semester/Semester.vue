@@ -1,7 +1,10 @@
 <template>
   <b-card title="Quản lý học kỳ">
     <b-row class="mb-1">
-      <b-col cols="12" md="3">
+      <b-col
+        cols="12"
+        md="3"
+      >
         <div class="">
           <v-select
             v-model="selectedYear"
@@ -20,16 +23,29 @@
           </v-select>
         </div>
       </b-col>
-      <b-col cols="12" md="5">
+      <b-col
+        cols="12"
+        md="5"
+      >
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
-          <b-form-input v-model="searchQuery" placeholder="Tìm kiếm học kỳ" />
+          <b-form-input
+            v-model="searchQuery"
+            placeholder="Tìm kiếm học kỳ"
+          />
         </b-input-group>
       </b-col>
-      <b-col class="d-flex justify-content-end" cols="12" md="4">
-        <b-button variant="primary" @click="openModalAdd(null)">
+      <b-col
+        class="d-flex justify-content-end"
+        cols="12"
+        md="4"
+      >
+        <b-button
+          variant="primary"
+          @click="openModalAdd(null)"
+        >
           <feather-icon icon="PlusIcon" /> Thêm học kỳ
         </b-button>
       </b-col>
@@ -119,14 +135,13 @@ import {
   BRow,
   BCol,
   VBTooltip,
-  BBadge,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import AddUpdateModal from './AddUpdateModal.vue'
 import semesterServices from '@/services/semester'
 import yearServices from '@/services/year'
+import AddUpdateModal from './AddUpdateModal.vue'
 
 export default {
   components: {
@@ -139,7 +154,6 @@ export default {
     BButton,
     BRow,
     BCol,
-    BBadge,
     AddUpdateModal,
     vSelect,
   },
@@ -178,16 +192,13 @@ export default {
   computed: {
     resultQuery() {
       if (this.searchQuery) {
-        return this.items.filter((item) =>
-          this.searchQuery
-            .toLowerCase()
-            .split(' ')
-            .every(
-              (v) =>
-                item.name.toLowerCase().includes(v) ||
-                item.year.name.toLowerCase().includes(v)
-            )
-        )
+        return this.items.filter(item => this.searchQuery
+          .toLowerCase()
+          .split(' ')
+          .every(
+            v => item.name.toLowerCase().includes(v)
+                || item.year.name.toLowerCase().includes(v),
+          ))
       }
       return this.items
     },
@@ -238,11 +249,11 @@ export default {
           cancelButton: 'btn btn-primary ml-1',
         },
         buttonsStyling: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.value) {
           semesterServices
             .delete(id)
-            .then((res) => {
+            .then(res => {
               this.$swal({
                 icon: 'success',
                 title: 'Đã xoá!',
@@ -252,7 +263,7 @@ export default {
                 },
               })
             })
-            .catch((err) => {
+            .catch(err => {
               this.$swal({
                 icon: 'error',
                 title: 'Lỗi!',
@@ -297,7 +308,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
-</style>

@@ -59,13 +59,13 @@
           text-field="name"
         />
       </b-form-group>
-      <!-- <b-form-group>
+      <b-form-group>
         <label>Bộ môn:</label>
         <b-form-select
           v-model="form.subject"
           :options="options"
         />
-      </b-form-group> -->
+      </b-form-group>
       <div class="d-flex justify-content-end">
         <b-button
           variant="outline-primary"
@@ -137,7 +137,7 @@ export default {
         email: '',
         phone: '',
         department: '',
-        // subject: '',
+        subject: '',
         role: '',
         address: '',
       },
@@ -150,7 +150,7 @@ export default {
           text: 'Admin',
         },
         {
-          value: 'ACADEMIC_STAFF',
+          value: 'MINISTRY',
           text: 'Giáo vụ',
         },
         {
@@ -177,9 +177,19 @@ export default {
     async getDepartments() {
       try {
         const res = await departmentService.getDepartments()
-        this.optionsDepartment = res.data.data
-      } catch {
-        console.log('lỗi rồi nè')
+        this.optionsDepartment = res.data.data.departments
+      } catch (error) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: error.response?.data.message
+              ? error.response.data.message
+              : error.toString(),
+            variant: 'warning',
+          },
+        })
       }
     },
     onSubmit() {

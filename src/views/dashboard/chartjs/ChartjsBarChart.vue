@@ -2,20 +2,7 @@
   <b-card no-body>
     <b-card-header>
       <b-card-title>Thống kế số giờ các giảng viên</b-card-title>
-      <!-- datepicker -->
-      <div class="d-flex align-items-center">
-        <feather-icon
-          icon="CalendarIcon"
-          size="16"
-        />
-        <flat-pickr
-          v-model="rangePicker"
-          :config="{ mode: 'range' }"
-          class="form-control flat-picker bg-transparent border-0 shadow-none"
-          placeholder="YYYY-MM-DD"
-        />
-      </div>
-      <!-- datepicker -->
+      <div class="d-flex align-items-center" />
     </b-card-header>
 
     <!-- chart -->
@@ -46,7 +33,6 @@ export default {
     BCardHeader,
     BCardBody,
     BCardTitle,
-    flatPickr,
     ChartjsComponentBarChart,
   },
   data() {

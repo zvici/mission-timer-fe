@@ -253,6 +253,3 @@ export default {
   },
 }
 </script>
-<style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
-</style>

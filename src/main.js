@@ -11,6 +11,8 @@ import App from './App.vue'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'viewerjs/dist/viewer.css'
 
+import '@core/scss/vue/libs/vue-select.scss'
+
 // Global Components
 import './global-components'
 
