@@ -267,11 +267,6 @@ export default {
     },
   },
   watch: {
-    isVisible() {
-      if (this.isVisible) {
-        this.getDepartments()
-      }
-    },
     // eslint-disable-next-line func-names
     'form.department': function () {
       this.getSubjects(this.form.department)
@@ -279,8 +274,8 @@ export default {
     dataEditAndisVisible() {
       if (this.dataEdit) {
         this.form = { ...this.dataEdit }
-      } else this.onClearForm()
-      this.getContents()
+      } else this.onClear()
+      this.getDepartments()
     },
   },
   destroyed() {
@@ -344,7 +339,7 @@ export default {
         email: '',
         phone: '',
         department: '',
-        // subject: '',
+        subject: '',
         role: '',
         address: '',
       }
@@ -364,13 +359,15 @@ export default {
         })
         this.$emit('reload-data')
         this.onClear()
-      } catch (e) {
+      } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: e,
+            text: err.response.data.message
+              ? err.response.data.message
+              : err.toString(),
             variant: 'warning',
           },
         })
@@ -393,13 +390,15 @@ export default {
         })
         this.$emit('reload-data')
         this.onClose()
-      } catch (e) {
+      } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: e,
+            text: err.response.data.message
+              ? err.response.data.message
+              : err.toString(),
             variant: 'warning',
           },
         })

@@ -77,8 +77,8 @@
           </div>
         </div>
       </template>
-      <template #cell(department)="data">
-        {{ data.value.name }}
+      <template #cell(subject)="data">
+          {{ data.value.name }}
       </template>
       <template #cell(role)="data">
         <b-badge
@@ -110,12 +110,22 @@
           <feather-icon icon="EditIcon" />
         </b-button>
         <b-button
+          v-if="data.item.isActive"
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="gradient-danger"
           class="btn-icon rounded-circle ml-1"
           @click="deleteContent(data.item._id)"
         >
-          <feather-icon icon="Trash2Icon" />
+          <feather-icon icon="LockIcon" />
+        </b-button>
+        <b-button
+          v-if="!data.item.isActive"
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          variant="success"
+          class="btn-icon rounded-circle ml-1"
+          @click="deleteContent(data.item._id)"
+        >
+          <feather-icon icon="UnlockIcon" />
         </b-button>
       </template>
       <template #empty>
@@ -131,7 +141,9 @@
     </b-table>
     <div class="d-flex justify-content-between align-items-center">
       <b-form-group class="mb-0">
-        <label class="d-inline-block text-sm-left mr-50">Số dòng trên trang</label>
+        <label
+          class="d-inline-block text-sm-left mr-50"
+        >Số dòng trên trang</label>
         <b-form-select
           id="perPageSelect"
           v-model="perPage"
@@ -174,6 +186,7 @@ import {
   BPagination,
   BFormSelect,
   BAvatar,
+  BFormGroup,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -183,6 +196,7 @@ import ModalAddUser from './ModalAddUser.vue'
 
 export default {
   components: {
+    BFormGroup,
     BInputGroup,
     BFormInput,
     BInputGroupPrepend,
@@ -208,7 +222,8 @@ export default {
       fields: [
         { key: 'userId', label: 'Mã người dùng' },
         { key: 'name', label: 'Tên người dùng' },
-        { key: 'department', label: 'Khoa' },
+        { key: 'subject', label: 'Bộ môn' },
+        { key: 'phone', label: 'Số điện thoại' },
         { key: 'address', label: 'Địa chỉ' },
         { key: 'role', label: 'Quyền' },
         { key: 'action', label: 'Hành động' },
@@ -280,19 +295,21 @@ export default {
       }
     },
     openModalAdd(data) {
-      this.dataEdit = {
-        // eslint-disable-next-line no-underscore-dangle
-        _id: data._id,
-        userId: data.userId,
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        role: data.role,
-        // eslint-disable-next-line no-underscore-dangle
-        department: data.department._id,
-        // eslint-disable-next-line no-underscore-dangle
-        subject: data.subject._id,
+      if (data) {
+        this.dataEdit = {
+          // eslint-disable-next-line no-underscore-dangle
+          _id: data._id,
+          userId: data.userId,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          role: data.role,
+          // eslint-disable-next-line no-underscore-dangle
+          department: data.department._id,
+          // eslint-disable-next-line no-underscore-dangle
+          subject: data.subject._id,
+        }
       }
       this.isVisibleModalAdd = true
     },
