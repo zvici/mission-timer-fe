@@ -1,5 +1,5 @@
 <template>
-  <b-card no-body>
+  <b-card>
     <b-card-header>
       <b-card-title>Thống kế số giờ các giảng viên</b-card-title>
       <v-select
@@ -16,7 +16,6 @@
         </template>
       </v-select>
     </b-card-header>
-
     <!-- chart -->
     <b-card-body>
       <chartjs-component-bar-chart
