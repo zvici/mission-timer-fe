@@ -49,12 +49,6 @@
       <template #cell(department)="data">
         <span>{{ data.value.name }}</span>
       </template>
-      <template #cell(startDate)="data">
-        <span>{{ data.value | filterDate }}</span>
-      </template>
-      <template #cell(endDate)="data">
-        <span>{{ data.value | filterDate }}</span>
-      </template>
       <template #cell(createdBy)="data">
         <span>{{ data.value.name }}</span>
       </template>
@@ -151,10 +145,10 @@ export default {
       fields: [
         { key: 'index', label: 'STT' },
         { key: 'name', label: 'Tên' },
-        { key: 'department', label: 'Năm' },
+        { key: 'department', label: 'Khoa' },
         { key: 'description', label: 'Mô tả' },
-        { key: 'startDate', label: 'Ngày bắt đầu' },
-        { key: 'endDate', label: 'Ngày kết thúc' },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Số điện thoại' },
         { key: 'createdBy', label: 'Tạo bởi' },
         { key: 'createdAt', label: 'Ngày tạo' },
         { key: 'updatedBy', label: 'Cập nhật bởi' },
@@ -202,7 +196,6 @@ export default {
   },
   methods: {
     async getDataTable() {
-      console.log(this.selectedDepartment)
       this.isBusy = true
       try {
         const res = await subjectServices.getSubjects(this.selectedDepartment)
