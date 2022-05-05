@@ -86,7 +86,7 @@
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="gradient-danger"
           class="btn-icon rounded-circle ml-1"
-          @click="deleteContent(data.item._id)"
+          @click="blockUser(data.item._id)"
         >
           <feather-icon icon="LockIcon" />
         </b-button>
@@ -95,7 +95,7 @@
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="success"
           class="btn-icon rounded-circle ml-1"
-          @click="deleteContent(data.item._id)"
+          @click="blockUser(data.item._id)"
         >
           <feather-icon icon="UnlockIcon" />
         </b-button>
@@ -300,6 +300,49 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
+    },
+    async blockUser(id) {
+      this.$swal({
+        title: 'Bạn chắc chứ?',
+        text: 'Bạn sẽ không thể hoàn tác hành động này!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Vâng',
+        cancelButtonText: 'Đóng',
+        customClass: {
+          confirmButton: 'btn btn-outline-danger',
+          cancelButton: 'btn btn-primary ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          userServices
+            .blockUser(id)
+            .then(res => {
+              this.$swal({
+                icon: 'success',
+                title: 'Hoàn tất!',
+                text: res.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
+            })
+            .catch(err => {
+              this.$swal({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: err.response.data.message,
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                },
+              })
+            })
+            .finally(() => {
+              this.getAllUser()
+            })
+        }
+      })
     },
   },
 }
