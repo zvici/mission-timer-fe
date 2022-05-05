@@ -50,7 +50,7 @@
       <template #cell(name)="data">
         <div class="d-flex align-items-center">
           <b-avatar size="lg" :src="data.item.avatar" />
-          <div class="pl-2 d-flex flex-column">
+          <div :class="[{ 'text-danger': !data.item.isActive }, 'pl-2 d-flex flex-column']">
             <span class="">
               {{ data.item.name }}
             </span>
@@ -314,11 +314,11 @@ export default {
           cancelButton: 'btn btn-primary ml-1',
         },
         buttonsStyling: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.value) {
           userServices
             .blockUser(id)
-            .then(res => {
+            .then((res) => {
               this.$swal({
                 icon: 'success',
                 title: 'Hoàn tất!',
@@ -328,7 +328,7 @@ export default {
                 },
               })
             })
-            .catch(err => {
+            .catch((err) => {
               this.$swal({
                 icon: 'error',
                 title: 'Lỗi!',
