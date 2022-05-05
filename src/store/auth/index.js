@@ -36,7 +36,6 @@ export default {
         axiosIns
           .post('/user/login', payload)
           .then(res => {
-            console.log(res)
             context.commit('setAuthenticated', {
               isAuthenticated: true,
               token: res.data.data.token,
