@@ -205,7 +205,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           yearServices
-            .deleteYear(id)
+            .delete(id)
             .then((res) => {
               this.$swal({
                 icon: 'success',

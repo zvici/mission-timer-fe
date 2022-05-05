@@ -162,7 +162,7 @@ export default {
             ...this.form,
           })
         } else {
-          res = await yearServices.addYear(this.form)
+          res = await yearServices.create(this.form)
         }
         this.$toast({
           component: ToastificationContent,

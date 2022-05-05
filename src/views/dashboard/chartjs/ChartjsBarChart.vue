@@ -5,6 +5,7 @@
       <v-select
         v-model="selectedSemester"
         :reduce="(semester) => semester._id"
+        label="name"
         :options="optionsSemester"
         style="width: 260px;"
       >
