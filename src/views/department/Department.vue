@@ -1,30 +1,17 @@
 <template>
-  <b-card title="Quản lý nội dung công tác">
+  <b-card title="Quản lý khoa">
     <b-row class="mb-1">
-      <b-col
-        cols="12"
-        md="6"
-      >
+      <b-col cols="12" md="6">
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
-          <b-form-input
-            v-model="searchQuery"
-            placeholder="Tìm kiếm nội dung công tác"
-          />
+          <b-form-input v-model="searchQuery" placeholder="Tìm kiếm khoa" />
         </b-input-group>
       </b-col>
-      <b-col
-        class="d-flex justify-content-end"
-        cols="12"
-        md="6"
-      >
-        <b-button
-          variant="primary"
-          @click="openModalAdd(null)"
-        >
-          <feather-icon icon="PlusIcon" /> Thêm nội dung công tác
+      <b-col class="d-flex justify-content-end" cols="12" md="6">
+        <b-button variant="primary" @click="openModalAdd(null)">
+          <feather-icon icon="PlusIcon" /> Thêm khoa
         </b-button>
       </b-col>
     </b-row>
@@ -39,6 +26,9 @@
       <!-- A virtual column -->
       <template #cell(index)="data">
         {{ data.index + 1 }}
+      </template>
+      <template #cell(department)="data">
+        <span>{{ data.value.name }}</span>
       </template>
       <template #cell(createdBy)="data">
         <span>{{ data.value.name }}</span>
@@ -66,7 +56,7 @@
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             variant="gradient-danger"
             class="btn-icon rounded-circle ml-1"
-            @click="deleteContent(data.item._id)"
+            @click="deleteDepartment(data.item._id)"
           >
             <feather-icon icon="Trash2Icon" />
           </b-button>
@@ -83,11 +73,11 @@
         </div>
       </template>
     </b-table>
-    <add-content
+    <add-update-modal
       :is-visible="isVisibleModalAdd"
       :data-edit="dataEdit"
       @close-modal-add="closeModalAdd"
-      @reload-data="getContents"
+      @reload-data="getDataTable"
     />
   </b-card>
 </template>
@@ -106,9 +96,10 @@ import {
   VBTooltip,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import contentServices from '@/services/content'
-import AddContent from './AddContent.vue'
+import departmentServices from '@/services/department'
+import AddUpdateModal from './AddUpdateModal.vue'
 
 export default {
   components: {
@@ -121,7 +112,8 @@ export default {
     BButton,
     BRow,
     BCol,
-    AddContent,
+    AddUpdateModal,
+    vSelect,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -131,8 +123,10 @@ export default {
     return {
       fields: [
         { key: 'index', label: 'STT' },
-        { key: 'title', label: 'Nội dung' },
+        { key: 'name', label: 'Tên' },
         { key: 'description', label: 'Mô tả' },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Số điện thoại' },
         { key: 'createdBy', label: 'Tạo bởi' },
         { key: 'createdAt', label: 'Ngày tạo' },
         { key: 'updatedBy', label: 'Cập nhật bởi' },
@@ -153,30 +147,38 @@ export default {
   computed: {
     resultQuery() {
       if (this.searchQuery) {
-        return this.items.filter(item => this.searchQuery
-          .toLowerCase()
-          .split(' ')
-          .every(v => item.title.toLowerCase().includes(v)))
+        return this.items.filter((item) =>
+          this.searchQuery
+            .toLowerCase()
+            .split(' ')
+            .every(
+              (v) =>
+                item.name.toLowerCase().includes(v) ||
+                item.department.name.toLowerCase().includes(v)
+            )
+        )
       }
       return this.items
     },
   },
   created() {
-    this.getContents()
+    this.getDataTable()
   },
   methods: {
-    async getContents() {
+    async getDataTable() {
       this.isBusy = true
       try {
-        const res = await contentServices.getContens()
-        this.items = res.data.data.contents
+        const res = await departmentServices.getDepartments()
+        this.items = res.data.data.departments
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: err.response.data.message,
+            text: err.response.data.message
+              ? err.response.data.message
+              : err.toString(),
             variant: 'warning',
           },
         })
@@ -184,7 +186,7 @@ export default {
         this.isBusy = false
       }
     },
-    async deleteContent(id) {
+    async deleteDepartment(id) {
       this.$swal({
         title: 'Bạn chắc chứ?',
         text: 'Bạn sẽ không thể hoàn tác hành động này!',
@@ -197,11 +199,11 @@ export default {
           cancelButton: 'btn btn-primary ml-1',
         },
         buttonsStyling: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.value) {
-          contentServices
-            .deleteContent(id)
-            .then(res => {
+          departmentServices
+            .delete(id)
+            .then((res) => {
               this.$swal({
                 icon: 'success',
                 title: 'Đã xoá!',
@@ -211,18 +213,18 @@ export default {
                 },
               })
             })
-            .catch(err => {
+            .catch((err) => {
               this.$swal({
                 icon: 'error',
                 title: 'Lỗi!',
-                text: err.response.data.message,
+                text: err.response?.data.message,
                 customClass: {
                   confirmButton: 'btn btn-success',
                 },
               })
             })
             .finally(() => {
-              this.getContents()
+              this.getDataTable()
             })
         }
       })
@@ -237,5 +239,3 @@ export default {
   },
 }
 </script>
-
-<style></style>

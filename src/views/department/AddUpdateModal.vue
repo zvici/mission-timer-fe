@@ -2,37 +2,45 @@
   <b-modal
     :visible="isVisible"
     centered
-    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} nội dung hoạt động`"
+    :title="`${dataEdit ? 'Cập nhật' : 'Thêm'} khoa`"
     :hide-footer="true"
     @hide="onClose"
   >
     <validation-observer ref="refFormObserver">
       <b-form @submit.prevent>
-        <validation-provider
-          #default="{ errors }"
-          name="Title"
-          rules="required"
-        >
+        <!-- Name -->
+        <validation-provider #default="{ errors }" name="Tên" rules="required">
           <b-form-group>
-            <label>Nội dung</label>
+            <label>Tên khoa</label>
             <b-form-input
-              v-model="form.title"
+              v-model="form.name"
               :state="errors.length > 0 ? false : null"
-              autofocus
-              placeholder="Nhập nội dung"
+              placeholder="Nhập tên khoa"
             />
             <small class="text-danger">{{
-              errors[0] && 'Vui lòng nhập nội dung'
+              errors[0] && 'Vui lòng nhập tên khoa'
             }}</small>
           </b-form-group>
         </validation-provider>
+        <!-- Description -->
         <b-form-group>
           <label>Mô tả</label>
-          <b-form-input
+          <b-form-textarea
             v-model="form.description"
             placeholder="Nhập mô tả"
           />
         </b-form-group>
+        <!-- Email -->
+        <b-form-group>
+          <label>Email</label>
+          <b-form-input v-model="form.email" placeholder="Nhập email" />
+        </b-form-group>
+        <!-- Email -->
+        <b-form-group>
+          <label>Số điện thoại</label>
+          <b-form-input v-model="form.phone" placeholder="Nhập số điện thoại" />
+        </b-form-group>
+
         <div class="d-flex justify-content-end">
           <b-overlay
             :show="isBusy"
@@ -42,19 +50,11 @@
             spinner-variant="primary"
             class="d-inline-block"
           >
-            <b-button
-              variant="primary"
-              type="submit"
-              @click="validationForm"
-            >
-              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} nội dung
+            <b-button variant="primary" type="submit" @click="validationForm">
+              {{ dataEdit ? 'Cập nhật' : 'Thêm' }} khoa
             </b-button>
           </b-overlay>
-          <b-button
-            class="ml-1"
-            variant="outline-primary"
-            @click="onClose()"
-          >
+          <b-button class="ml-1" variant="outline-primary" @click="onClose()">
             Đóng
           </b-button>
         </div>
@@ -71,12 +71,15 @@ import {
   VBTooltip,
   BButton,
   BOverlay,
+  BFormTextarea,
+  BFormDatepicker,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
-import contentServices from '@/services/content'
+import vSelect from 'vue-select'
+import departmentServices from '@/services/department'
 
 export default {
   components: {
@@ -84,10 +87,13 @@ export default {
     BFormGroup,
     BModal,
     BFormInput,
+    BFormTextarea,
     BButton,
     BOverlay,
     ValidationProvider,
     ValidationObserver,
+    BFormDatepicker,
+    vSelect,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -108,9 +114,12 @@ export default {
   data() {
     return {
       form: {
-        title: '',
+        name: '',
         description: '',
+        email: '',
+        phone: '',
       },
+      optionDepartments: [],
       isBusy: false,
       required,
     }
@@ -133,12 +142,14 @@ export default {
     },
     onClearForm() {
       this.form = {
-        title: '',
+        name: '',
         description: '',
+        email: '',
+        phone: '',
       }
     },
     validationForm() {
-      this.$refs.refFormObserver.validate().then(success => {
+      this.$refs.refFormObserver.validate().then((success) => {
         if (success) this.handleReq()
       })
     },
@@ -147,13 +158,13 @@ export default {
       try {
         let res
         if (this.dataEdit) {
-          res = await contentServices.updateContent({
+          res = await departmentServices.update({
             // eslint-disable-next-line no-underscore-dangle
             id: this.dataEdit._id,
             ...this.form,
           })
         } else {
-          res = await contentServices.addContent(this.form)
+          res = await departmentServices.create(this.form)
         }
         this.$toast({
           component: ToastificationContent,
@@ -167,13 +178,15 @@ export default {
         this.onClearForm()
         this.onClose()
         this.$emit('reload-data')
-      } catch (e) {
+      } catch (err) {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Thông báo',
             icon: 'BellIcon',
-            text: e,
+            text: err.response?.data.message
+              ? err.response.data.message
+              : err.toString(),
             variant: 'warning',
           },
         })

@@ -1,16 +1,13 @@
 <template>
   <b-card title="Quản lý người dùng">
     <b-row class="mb-1">
-      <b-col
-        cols="12"
-        md="3"
-      >
+      <b-col cols="12" md="3">
         <div class="">
           <v-select
             v-model="selectedRole"
             :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
             label="name"
-            :reduce="role => role.id"
+            :reduce="(role) => role.id"
             :options="optionRoles"
             placeholder="Lọc theo: Tất cả"
           >
@@ -23,29 +20,16 @@
           </v-select>
         </div>
       </b-col>
-      <b-col
-        cols="12"
-        md="5"
-      >
+      <b-col cols="12" md="5">
         <b-input-group class="input-group-merge">
           <b-input-group-prepend is-text>
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
-          <b-form-input
-            v-model="filter"
-            placeholder="Tìm kiếm người dùng"
-          />
+          <b-form-input v-model="filter" placeholder="Tìm kiếm người dùng" />
         </b-input-group>
       </b-col>
-      <b-col
-        class="d-flex justify-content-end"
-        cols="12"
-        md="4"
-      >
-        <b-button
-          variant="primary"
-          @click="openModalAdd(null)"
-        >
+      <b-col class="d-flex justify-content-end" cols="12" md="4">
+        <b-button variant="primary" @click="openModalAdd(null)">
           <feather-icon icon="PlusIcon" /> Thêm người dùng
         </b-button>
       </b-col>
@@ -65,10 +49,7 @@
       <!-- A virtual column -->
       <template #cell(name)="data">
         <div class="d-flex align-items-center">
-          <b-avatar
-            size="lg"
-            :src="data.item.avatar"
-          />
+          <b-avatar size="lg" :src="data.item.avatar" />
           <div class="pl-2 d-flex flex-column">
             <span class="">
               {{ data.item.name }}
@@ -78,25 +59,16 @@
         </div>
       </template>
       <template #cell(subject)="data">
-          {{ data.value.name }}
+        {{ data.value.name }}
       </template>
       <template #cell(role)="data">
-        <b-badge
-          v-if="data.value === 'ADMIN'"
-          variant="light-dark"
-        >
+        <b-badge v-if="data.value === 'ADMIN'" variant="light-dark">
           Admin
         </b-badge>
-        <b-badge
-          v-if="data.value === 'MINISTRY'"
-          variant="light-info"
-        >
+        <b-badge v-if="data.value === 'MINISTRY'" variant="light-info">
           Giáo vụ
         </b-badge>
-        <b-badge
-          v-if="data.value === 'STAFF'"
-          variant="light-primary"
-        >
+        <b-badge v-if="data.value === 'STAFF'" variant="light-primary">
           Nhân viên
         </b-badge>
       </template>
@@ -142,9 +114,9 @@
     <!-- Pagination -->
     <div class="d-flex justify-content-between align-items-center">
       <b-form-group class="mb-0">
-        <label
-          class="d-inline-block text-sm-left mr-50"
-        >Số dòng trên trang</label>
+        <label class="d-inline-block text-sm-left mr-50"
+          >Số dòng trên trang</label
+        >
         <b-form-select
           id="perPageSelect"
           v-model="perPage"
@@ -315,7 +287,7 @@ export default {
           // eslint-disable-next-line no-underscore-dangle
           subject: data.subject._id,
         }
-      } else{
+      } else {
         this.dataEdit = null
       }
       this.isVisibleModalAdd = true
@@ -333,4 +305,5 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+</style>
