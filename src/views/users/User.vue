@@ -139,6 +139,7 @@
         </div>
       </template>
     </b-table>
+    <!-- Pagination -->
     <div class="d-flex justify-content-between align-items-center">
       <b-form-group class="mb-0">
         <label
@@ -161,6 +162,7 @@
         class="my-0"
       />
     </div>
+    <!-- Modal add or edit user -->
     <modal-add-user
       :is-visible="isVisibleModalAdd"
       :data-edit="dataEdit"
@@ -264,6 +266,7 @@ export default {
     }
   },
   watch: {
+    // when selected role changed, update the table by role
     selectedRole() {
       this.getAllUser(this.selectedRole)
     },
@@ -272,6 +275,7 @@ export default {
     this.getAllUser()
   },
   methods: {
+    // Get list user into table
     async getAllUser(role) {
       this.isBusy = true
       try {
@@ -294,6 +298,7 @@ export default {
         this.isBusy = false
       }
     },
+    // Open modal add or edit user
     openModalAdd(data) {
       if (data) {
         this.dataEdit = {
@@ -315,6 +320,7 @@ export default {
       }
       this.isVisibleModalAdd = true
     },
+    // Close modal add or edit user
     closeModalAdd() {
       this.isVisibleModalAdd = false
     },
