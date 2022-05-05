@@ -310,6 +310,8 @@ export default {
           // eslint-disable-next-line no-underscore-dangle
           subject: data.subject._id,
         }
+      } else{
+        this.dataEdit = null
       }
       this.isVisibleModalAdd = true
     },
