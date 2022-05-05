@@ -117,7 +117,6 @@ import {
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import semesterServices from '@/services/semester'
 import departmentServices from '@/services/department'
 import AddUpdateModal from './AddUpdateModal.vue'
 import subjectServices from '@/services/subject'
@@ -231,7 +230,7 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          semesterServices
+          subjectServices
             .delete(id)
             .then((res) => {
               this.$swal({
