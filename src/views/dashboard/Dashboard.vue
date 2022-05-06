@@ -1,13 +1,20 @@
 <template>
-  <chartjs />
+  <b-row class="match-height">
+    <b-col md="12">
+      <TableUsers />
+    </b-col>
+  </b-row>
 </template>
 
 <script>
-import Chartjs from './chartjs/Chartjs.vue'
+import { BRow, BCol } from 'bootstrap-vue'
+import TableUsers from './table/TableUsers.vue'
 
 export default {
   components: {
-    Chartjs,
+    TableUsers,
+    BRow,
+    BCol,
   },
 }
 </script>

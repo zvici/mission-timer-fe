@@ -190,7 +190,7 @@ export default {
         { key: 'status', label: 'Trạng thái' },
         { key: 'reason', label: 'Lý do' },
         { key: 'imageBase64', label: 'Minh chứng' },
-        { key: 'isApprove', label: 'Xác nhận' },
+        { key: 'isApprove', label: 'Xác nhận hoàn thành công việc' },
         { key: 'action', label: 'Hành động' },
       ],
       items: [],
@@ -287,7 +287,7 @@ export default {
       this.isBusy = false
     },
     async getParticipantsByTask() {
-      this.isBusy = false
+      this.isBusy = true
       try {
         const res = await participantServices.getParticipants({
           task: this.idEvent,
