@@ -24,12 +24,7 @@
           :current-page="currentPage"
           :items="items"
           :fields="fields"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
           :filter="filter"
-          :filter-included-fields="filterOn"
-          @filtered="onFiltered"
         >
           <template #cell(avatar)="data">
             <b-avatar :src="data.value" />
@@ -39,28 +34,27 @@
           </template>
         </b-table>
       </b-col>
-
-      <b-col cols="12" class="d-flex justify-content-between">
-        <b-form-group class="mb-0">
-          <label class="d-inline-block text-sm-left mr-50"
-            >Số dòng trên trang</label
-          >
-          <b-form-select
-            id="perPageSelect"
-            v-model="perPage"
-            :options="pageOptions"
-            class="w-50"
-          />
-        </b-form-group>
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="center"
-          class="my-0"
-        />
-      </b-col>
     </b-row>
+    <div class="d-flex justify-content-between align-items-center">
+      <b-form-group class="mb-0">
+        <label class="d-inline-block text-sm-left mr-50"
+          >Số dòng trên trang</label
+        >
+        <b-form-select
+          id="perPageSelect"
+          v-model="perPage"
+          :options="pageOptions"
+          class="w-50"
+        />
+      </b-form-group>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        align="center"
+        class="my-0"
+      />
+    </div>
   </b-card>
 </template>
 
@@ -106,16 +100,7 @@ export default {
       pageOptions: [3, 5, 10],
       totalRows: 1,
       currentPage: 1,
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
       filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: '',
-      },
       fields: [
         {
           key: 'avatar',
@@ -140,18 +125,6 @@ export default {
       optionsSemester: [],
     }
   },
-  computed: {
-    sortOptions() {
-      // Create an options list from our fields
-      return this.fields
-        .filter((f) => f.sortable)
-        .map((f) => ({ text: f.label, value: f.key }))
-    },
-  },
-  mounted() {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-  },
   created() {
     this.getSemesters()
   },
@@ -166,6 +139,7 @@ export default {
       try {
         const res = await statisticalServices.activityUsersStatistics(semester)
         this.items = res.data.data.statistic
+        this.totalRows = this.items.length
       } catch (error) {
         this.$toast({
           component: ToastificationContent,
@@ -202,20 +176,6 @@ export default {
           },
         })
       }
-    },
-    info(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-    },
-    resetInfoModal() {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
-    },
-    onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
     },
   },
 }
