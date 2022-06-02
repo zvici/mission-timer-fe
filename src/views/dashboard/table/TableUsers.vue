@@ -118,11 +118,16 @@ export default {
           label: 'Tổng số giờ đã đạt được',
           sortable: true,
         },
+        {
+          key: 'action',
+          label: 'Hành động',
+        },
       ],
       items: [],
       isLoading: true,
       selectedSemester: '',
       optionsSemester: [],
+      selectedYear: '',
     }
   },
   created() {
@@ -177,7 +182,9 @@ export default {
         })
       }
     },
+    exportExcel(user) {
+      window.location.href = `${process.env.VUE_APP_API_URL}/statistical/export?user=${user}&year=${selectedYear}`
+    },
   },
 }
 </script>
- 
