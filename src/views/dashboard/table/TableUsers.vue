@@ -32,6 +32,18 @@
           <template #cell(sumOfficeHours)="data">
             <span class="font-weight-bold text-danger">{{ data.value }}</span>
           </template>
+          <template #cell(action)="data">
+            <b-button
+              v-ripple.400="'rgba(40, 199, 111, 0.15)'"
+              variant="flat-success"
+              class="btn-icon rounded-circle"
+            >
+              <feather-icon
+                icon="DownloadIcon"
+                @click="exportExcel(data.item.id)"
+              />
+            </b-button>
+          </template>
         </b-table>
       </b-col>
     </b-row>
@@ -77,6 +89,7 @@ import {
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import semesterServices from '@/services/semester'
 import statisticalServices from '@/services/statistical'
+import Ripple from 'vue-ripple-directive'
 
 export default {
   components: {
@@ -93,6 +106,9 @@ export default {
     BInputGroupAppend,
     BButton,
     BCard,
+  },
+  directives: {
+    Ripple,
   },
   data() {
     return {
@@ -127,7 +143,7 @@ export default {
       isLoading: true,
       selectedSemester: '',
       optionsSemester: [],
-      selectedYear: '',
+      selectedYear: '627398e36d9e76e4c3552a57',
     }
   },
   created() {
@@ -183,7 +199,7 @@ export default {
       }
     },
     exportExcel(user) {
-      window.location.href = `${process.env.VUE_APP_API_URL}/statistical/export?user=${user}&year=${selectedYear}`
+      window.location.href = `${process.env.VUE_APP_API_URL}/statistical/export?user=${user}&year=${this.selectedYear}`
     },
   },
 }
