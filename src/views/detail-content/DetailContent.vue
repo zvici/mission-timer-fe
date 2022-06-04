@@ -25,8 +25,8 @@
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
           <b-form-input
-            v-model="searchQuery"
-            placeholder="Tìm kiếm chi tiết nội dung công tác"
+            v-model="filter"
+            placeholder="Tìm kiếm nội dung công tác"
           />
         </b-input-group>
       </b-col>
@@ -44,12 +44,16 @@
       </b-col>
     </b-row>
     <b-table
+      striped
       :fields="fields"
-      :items="resultQuery"
-      responsive="sm"
+      :items="items"
+      responsive
       bordered
       show-empty
       :busy="isBusy"
+      :per-page="perPage"
+      :current-page="currentPage"
+      :filter="filter"
     >
       <!-- A virtual column -->
       <template #cell(index)="data">
@@ -120,6 +124,29 @@
         </div>
       </template>
     </b-table>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center">
+      <b-form-group class="mb-0">
+        <label
+          class="d-inline-block text-sm-left mr-50"
+        >Số dòng trên trang</label>
+        <b-form-select
+          id="perPageSelect"
+          v-model="perPage"
+          size="md"
+          :options="pageOptions"
+          class="w-50"
+        />
+      </b-form-group>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        align="center"
+        size="md"
+        class="my-0"
+      />
+    </div>
     <add-content-detail
       :is-visible="isVisibleModalAdd"
       :data-edit="dataEdit"
@@ -131,6 +158,7 @@
 
 <script>
 import {
+  BFormGroup,
   BInputGroup,
   BFormInput,
   BInputGroupPrepend,
@@ -141,6 +169,8 @@ import {
   BRow,
   BCol,
   VBTooltip,
+  BPagination,
+  BFormSelect,
   BBadge,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
@@ -152,6 +182,7 @@ import AddContentDetail from './AddContentDetail.vue'
 
 export default {
   components: {
+    BFormGroup,
     BInputGroup,
     BFormInput,
     BInputGroupPrepend,
@@ -162,6 +193,8 @@ export default {
     BRow,
     BCol,
     BBadge,
+    BPagination,
+    BFormSelect,
     AddContentDetail,
     vSelect,
   },
@@ -194,19 +227,14 @@ export default {
       dataEdit: null,
       optionContents: [],
       selectedContent: '',
+      perPage: 5,
+      pageOptions: [5, 10, 15],
+      totalRows: 1,
+      currentPage: 1,
+      filter: null,
     }
   },
-  computed: {
-    resultQuery() {
-      if (this.searchQuery) {
-        return this.items.filter(item => this.searchQuery
-          .toLowerCase()
-          .split(' ')
-          .every(v => item.title.toLowerCase().includes(v)))
-      }
-      return this.items
-    },
-  },
+  computed: {},
   watch: {
     selectedContent() {
       this.getActivities()
@@ -217,6 +245,11 @@ export default {
     this.getActivities()
   },
   methods: {
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
     async getActivities() {
       this.isBusy = true
       try {
@@ -224,6 +257,7 @@ export default {
           content: this.selectedContent,
         })
         this.items = res.data.data.activities
+        this.totalRows = this.items.length
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
@@ -315,4 +349,3 @@ export default {
   },
 }
 </script>
-
