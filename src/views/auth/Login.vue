@@ -2,7 +2,7 @@
   <div class="auth-wrapper auth-v1 px-2">
     <div class="auth-inner py-2">
       <!-- Login v1 -->
-      <b-card class="mb-0">
+      <b-card class="mb-0 login-card">
         <b-link class="brand-logo">
           <!-- <vuexy-logo /> -->
           <h2 class="brand-text text-primary ml-1 text-center">
@@ -11,7 +11,7 @@
               alt="logo"
               width="120"
             >
-            <p class="mt-2">
+            <p class="mt-1">
               QUẢN LÝ CÔNG TÁC KHÁC
             </p>
           </h2>
@@ -116,6 +116,21 @@
             </b-overlay>
           </b-form>
         </validation-observer>
+        <div class="text-center mt-1">
+          hoặc tải xuống với
+        </div>
+        <div class="qr-area">
+          <img
+            class="shadow-sm mt-1"
+            height="40"
+            src="../../assets/images/bg/google-play-icon-download.png"
+          ></img>
+          <img
+            class="shadow-sm mt-1"
+            height="40"
+            src="../../assets/images/bg/app-store-icon-download.png"
+          ></img>
+        </div>
       </b-card>
       <!-- /Login v1 -->
     </div>
@@ -135,7 +150,6 @@ import {
   BButton,
   BOverlay,
   BCard,
-  BCardTitle,
 } from 'bootstrap-vue'
 import { required } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
@@ -155,7 +169,6 @@ export default {
     ValidationProvider,
     ValidationObserver,
     BOverlay,
-    BCardTitle,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -223,4 +236,11 @@ export default {
 
 <style lang="scss">
 @import '@core/scss/vue/pages/page-auth.scss';
+.qr-area {
+  display: flex;
+  justify-content: space-around;
+  img:hover{
+    cursor: pointer;
+  }
+}
 </style>

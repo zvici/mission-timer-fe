@@ -93,6 +93,14 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/notification',
+      name: 'notification-page',
+      component: () => import('@/views/notification/Notification.vue'),
+      meta: {
+        isRedirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/auth/Login.vue'),

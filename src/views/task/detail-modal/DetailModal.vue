@@ -48,7 +48,10 @@
         </b-button>
       </b-col>
     </b-row>
-    <b-overlay :show="isBusy" rounded="sm">
+    <b-overlay
+      :show="isBusy"
+      rounded="sm"
+    >
       <b-table
         :items="items"
         :fields="fields"
@@ -70,23 +73,38 @@
               :src="data.value"
               width="70px"
               style="cursor: pointer; border-radius: 3px"
-            />
+            >
           </viewer>
         </template>
         <template #cell(status)="data">
-          <b-badge v-if="data.value === 'notAnswered'" variant="info">
+          <b-badge
+            v-if="data.value === 'notAnswered'"
+            variant="info"
+          >
             Chưa trả lời
           </b-badge>
-          <b-badge v-if="data.value === 'accept'" variant="primary">
+          <b-badge
+            v-if="data.value === 'accept'"
+            variant="primary"
+          >
             Chấp nhận
           </b-badge>
-          <b-badge v-if="data.value === 'refuse'" variant="danger">
+          <b-badge
+            v-if="data.value === 'refuse'"
+            variant="danger"
+          >
             Từ chối
           </b-badge>
-          <b-badge v-if="data.value === 'incomplete'" variant="dark">
+          <b-badge
+            v-if="data.value === 'incomplete'"
+            variant="dark"
+          >
             Không hoàn thành
           </b-badge>
-          <b-badge v-if="data.value === 'done'" variant="success">
+          <b-badge
+            v-if="data.value === 'done'"
+            variant="success"
+          >
             Hoàn thành
           </b-badge>
         </template>
@@ -189,7 +207,7 @@ export default {
         { key: 'user', label: 'Họ tên' },
         { key: 'status', label: 'Trạng thái' },
         { key: 'reason', label: 'Lý do' },
-        { key: 'imageBase64', label: 'Minh chứng' },
+        { key: 'image', label: 'Minh chứng' },
         { key: 'isApprove', label: 'Xác nhận hoàn thành công việc' },
         { key: 'action', label: 'Hành động' },
       ],
@@ -355,11 +373,11 @@ export default {
           cancelButton: 'btn btn-primary ml-1',
         },
         buttonsStyling: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.value) {
           participantServices
             .deleteAParticipant({ id })
-            .then((res) => {
+            .then(res => {
               this.$swal({
                 icon: 'success',
                 title: 'Đã xoá!',
@@ -369,7 +387,7 @@ export default {
                 },
               })
             })
-            .catch((err) => {
+            .catch(err => {
               this.$swal({
                 icon: 'error',
                 title: 'Lỗi!',

@@ -30,6 +30,11 @@ export default [
     icon: 'BookIcon',
     children: [
       {
+        title: 'Thông báo',
+        route: 'notification-page',
+        icon: 'BookIcon',
+      },
+      {
         title: 'Năm học',
         route: 'years-page',
         icon: 'BookIcon',

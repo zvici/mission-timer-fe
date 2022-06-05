@@ -174,7 +174,7 @@
                   v-model="eventLocal.start"
                   :max-date="eventLocal.end"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' , time_24hr: true,}"
                 />
                 <b-form-invalid-feedback
                   :state="getValidationState(validationContext)"
@@ -199,7 +199,7 @@
                   v-model="eventLocal.end"
                   :min-date="eventLocal.start"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, }"
                 />
                 <b-form-invalid-feedback
                   :state="getValidationState(validationContext)"
