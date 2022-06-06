@@ -64,7 +64,7 @@
         <template #cell(user)="data">
           {{ data.value.name }}
         </template>
-        <template #cell(imageBase64)="data">
+        <template #cell(image)="data">
           <viewer>
             <img
               :src="data.value"
