@@ -1,10 +1,36 @@
 <template>
   <b-card title="Thông kê công tác giảng viên">
     <b-row>
-      <b-col md="6" class="my-1"> </b-col>
-      <b-col md="6" class="my-1">
-        <b-form-group label-for="filterInput" class="mb-0">
-          <b-input-group size="sm">
+      <b-col
+        md="3"
+        class="my-1"
+      >
+        <div class="">
+          <v-select
+            v-model="selectedYear"
+            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+            label="name"
+            :reduce="year => year._id"
+            :options="optionYears"
+          >
+            <template #option="{ name }">
+              <span>Lọc theo: {{ name }}</span>
+            </template>
+            <template #selected-option="{ name }">
+              <span>Lọc theo: {{ name }}</span>
+            </template>
+          </v-select>
+        </div>
+      </b-col>
+      <b-col
+        md="9"
+        class="my-1"
+      >
+        <b-form-group
+          label-for="filterInput"
+          class="mb-0"
+        >
+          <b-input-group>
             <b-form-input
               id="filterInput"
               v-model="filter"
@@ -49,9 +75,9 @@
     </b-row>
     <div class="d-flex justify-content-between align-items-center">
       <b-form-group class="mb-0">
-        <label class="d-inline-block text-sm-left mr-50"
-          >Số dòng trên trang</label
-        >
+        <label
+          class="d-inline-block text-sm-left mr-50"
+        >Số dòng trên trang</label>
         <b-form-select
           id="perPageSelect"
           v-model="perPage"
@@ -74,7 +100,6 @@
 import {
   BTable,
   BAvatar,
-  BBadge,
   BRow,
   BCol,
   BFormGroup,
@@ -87,15 +112,16 @@ import {
   BCard,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import Ripple from 'vue-ripple-directive'
+import vSelect from 'vue-select'
 import semesterServices from '@/services/semester'
 import statisticalServices from '@/services/statistical'
-import Ripple from 'vue-ripple-directive'
+import yearServices from '@/services/year'
 
 export default {
   components: {
     BTable,
     BAvatar,
-    BBadge,
     BRow,
     BCol,
     BFormGroup,
@@ -103,8 +129,8 @@ export default {
     BPagination,
     BInputGroup,
     BFormInput,
-    BInputGroupAppend,
     BButton,
+    vSelect,
     BCard,
   },
   directives: {
@@ -143,16 +169,22 @@ export default {
       isLoading: true,
       selectedSemester: '',
       optionsSemester: [],
-      selectedYear: '627398e36d9e76e4c3552a57',
+      optionYears: [],
+      selectedYear: '',
     }
-  },
-  created() {
-    this.getSemesters()
   },
   watch: {
     selectedSemester() {
       this.activityUsersStatistics(this.selectedSemester)
     },
+    selectedYear() {
+      this.activityUsersStatistics()
+    },
+  },
+
+  created() {
+    this.getYears()
+    this.getSemesters()
   },
   methods: {
     async activityUsersStatistics(semester) {
@@ -182,6 +214,7 @@ export default {
         const res = await semesterServices.getAll({ year })
         this.optionsSemester = res.data.data.semesters
         if (this.optionsSemester.length > 0) {
+          // eslint-disable-next-line no-underscore-dangle
           this.selectedSemester = this.optionsSemester[0]._id
         }
       } catch (error) {
@@ -196,6 +229,29 @@ export default {
             variant: 'warning',
           },
         })
+      }
+    },
+    async getYears() {
+      this.isBusy = true
+      try {
+        const res = await yearServices.getYears()
+        this.optionYears = res.data.data.years
+        if (res.data.data.years.length > 0) {
+          // eslint-disable-next-line no-underscore-dangle
+          this.selectedYear = this.optionYears[0]._id.toString()
+        }
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Thông báo',
+            icon: 'BellIcon',
+            text: err.response.data.message,
+            variant: 'warning',
+          },
+        })
+      } finally {
+        this.isBusy = false
       }
     },
     exportExcel(user) {

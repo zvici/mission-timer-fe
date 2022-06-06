@@ -12,7 +12,7 @@
             label="name"
             :reduce="(year) => year._id"
             :options="optionYears"
-            placeholder="Lọc theo: Tất cả"
+            placeholder="Lọc theo năm"
           >
             <template #option="{ name }">
               <span>Lọc theo: {{ name }}</span>
