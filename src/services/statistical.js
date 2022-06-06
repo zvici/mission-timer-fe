@@ -3,8 +3,8 @@ import axiosIns from '@/libs/axios'
 const baseUrl = '/statistical'
 
 const statisticalServices = {
-  activityUsersStatistics: (semester) =>
-    axiosIns.get(`${baseUrl}?semester=${semester}`),
+  activityUsersStatistics: (year) =>
+    axiosIns.get(`${baseUrl}?year=${year}`),
   export: (user, year) =>
     axiosIns.get(`${baseUrl}/export`, { params: { user, year } }),
 }

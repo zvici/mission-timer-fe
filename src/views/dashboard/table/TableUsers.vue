@@ -1,16 +1,13 @@
 <template>
   <b-card title="Thông kê công tác giảng viên">
     <b-row>
-      <b-col
-        md="3"
-        class="my-1"
-      >
+      <b-col md="3" class="my-1">
         <div class="">
           <v-select
             v-model="selectedYear"
             :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
             label="name"
-            :reduce="year => year._id"
+            :reduce="(year) => year._id"
             :options="optionYears"
           >
             <template #option="{ name }">
@@ -22,14 +19,8 @@
           </v-select>
         </div>
       </b-col>
-      <b-col
-        md="9"
-        class="my-1"
-      >
-        <b-form-group
-          label-for="filterInput"
-          class="mb-0"
-        >
+      <b-col md="9" class="my-1">
+        <b-form-group label-for="filterInput" class="mb-0">
           <b-input-group>
             <b-form-input
               id="filterInput"
@@ -75,9 +66,9 @@
     </b-row>
     <div class="d-flex justify-content-between align-items-center">
       <b-form-group class="mb-0">
-        <label
-          class="d-inline-block text-sm-left mr-50"
-        >Số dòng trên trang</label>
+        <label class="d-inline-block text-sm-left mr-50"
+          >Số dòng trên trang</label
+        >
         <b-form-select
           id="perPageSelect"
           v-model="perPage"
@@ -174,11 +165,8 @@ export default {
     }
   },
   watch: {
-    selectedSemester() {
-      this.activityUsersStatistics(this.selectedSemester)
-    },
     selectedYear() {
-      this.activityUsersStatistics()
+      this.activityUsersStatistic(this.selectedYear)
     },
   },
 
@@ -187,10 +175,12 @@ export default {
     this.getSemesters()
   },
   methods: {
-    async activityUsersStatistics(semester) {
+    async activityUsersStatistics(selectedYear) {
       this.isLoading = true
       try {
-        const res = await statisticalServices.activityUsersStatistics(semester)
+        const res = await statisticalServices.activityUsersStatistics(
+          selectedYear
+        )
         this.items = res.data.data.statistic
         this.totalRows = this.items.length
       } catch (error) {
