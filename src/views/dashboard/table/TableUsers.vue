@@ -166,7 +166,7 @@ export default {
   },
   watch: {
     selectedYear() {
-      this.activityUsersStatistic(this.selectedYear)
+      this.activityUsersStatistics(this.selectedYear)
     },
   },
 
